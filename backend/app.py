@@ -17,7 +17,7 @@ from bson.objectid import ObjectId
 # region Debug Output
 
 # for ease of debugging, debug output will be written to debug_out.txt
-DEBUG_FILE = None  # "debug_out.txt"
+DEBUG_FILE = "debug_out.txt"
 
 # clear debug file in startup
 if DEBUG_FILE:
@@ -108,6 +108,53 @@ mongo = MongoWrapper(os.getenv("MONGO_URI"))
 DB_USERS = "usersdb"
 COL_USERS = "users"
 
+"""Function to add Dex accounts to Database
+This is hardcoded, it is not synced with Dex.
+"""
+def addDexUsers():
+    users = [
+        {
+            "email": "admin@hw3.com",
+            "hash": "$2b$10$8NoCpIs/Z6v0s/pU9YxYIO10uWyhIVOS2kmNac9AD0HsqRhP5dUie",  # password = "password"
+            "username": "admin",
+            "userID": "123",
+        },
+        {
+            "email": "moderator@hw3.com",
+            "hash": "$2b$12$2aaoZyVjMWvoCq.DmCUECOGoW0oaBCyzSluUm3BpLrP26sVT71PSC",  # password = "mpassword"
+            "username": "moderator",
+            "userID": "456",
+        },
+        {
+            "email": "user@hw3.com",
+            "hash": "$2b$12$321HomfT164U9f5l.xQaYuHThGCss8PRPNy8t./tq8Frgr6UYeEka",  # password = "upassword"
+            "username": "user",
+            "userID": "789",
+        },
+    ]
+    for user in users:
+        find = mongo.findDocument(
+            DB_USERS,
+            COL_USERS,
+            {
+                "email": user["email"],
+                # "userID": user["userID"],
+            },
+        )
+        if not find:
+            mongo.insertDocument(
+                DB_USERS,
+                COL_USERS,
+                {
+                    "email": user["email"],
+                    "username": user["username"],
+                    "userID": user["userID"],
+                    "friends": [],
+                },
+            )
+
+
+addDexUsers()
 
 # @app.route("/")
 # def home():
@@ -186,3 +233,62 @@ def testFetch():
     return jsonify({"test": True})
 
 
+"""POST route to make friend.
+Parameters:
+    "email" (str): the email of the friend to add
+Return codes:
+    00: Successfully made friends
+    01: User is already friends
+    10: User is not logged in
+    11: Unable to retrieve user's friendlist
+    12: Unable to retrieve friend's friendlist
+    13: Friend is the current user
+"""
+@app.route("/api/post/makefriend", methods=["POST"])
+def makeFriends():
+    response = {}
+    data = request.form
+    debug_out("makefriend")
+    debug_out(data)
+
+    user = session.get("user")
+    if not user:
+        return jsonify({"result": 10})
+
+    if user["email"] == data["email"]:
+        return jsonify({"result": 13})
+
+    def getCurrFriendList(who):
+        doc = mongo.findDocument(DB_USERS, COL_USERS, {"email": who})
+        if doc:
+            return doc["friends"]
+        return None
+
+    user_friends = getCurrFriendList(user["email"])
+    friend_friends = getCurrFriendList(data["email"])
+
+    if user_friends is None:
+        return jsonify({"result": 11})
+    if friend_friends is None:
+        return jsonify({"result": 12})
+
+    if data["email"] not in user_friends:
+        user_friends.append(data["email"])
+        mongo.updateDocument(
+            DB_USERS,
+            COL_USERS,
+            {"friends": user_friends},
+            {"email": user["email"]},
+        )
+    else:
+        return jsonify({"result": 1})
+
+    if user["email"] not in friend_friends:
+        friend_friends.append(user["email"])
+        mongo.updateDocument(
+            DB_USERS,
+            COL_USERS,
+            {"friends": friend_friends},
+            {"email": data["email"]},
+        )
+    return jsonify({"result": 0})
