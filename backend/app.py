@@ -6,25 +6,30 @@ from flask import (
     send_from_directory,
     render_template,
     jsonify,
+    request,
 )
 from authlib.integrations.flask_client import OAuth
 from authlib.common.security import generate_token
 import os
+from pymongo import MongoClient
+from bson.objectid import ObjectId
 
 # region Debug Output
 
 # for ease of debugging, debug output will be written to debug_out.txt
-DEBUG_FILE = "debug_out.txt"
+DEBUG_FILE = None  # "debug_out.txt"
 
 # clear debug file in startup
-with open(DEBUG_FILE, "w") as f:
-    f.write("DEBUG LOG\n")
+if DEBUG_FILE:
+    with open(DEBUG_FILE, "w") as f:
+        f.write("DEBUG LOG\n")
 
 
 # function to write to debug file
 def debug_out(message: str):
-    with open(DEBUG_FILE, "a") as f:
-        f.write(str(message) + "\n")
+    if DEBUG_FILE:
+        with open(DEBUG_FILE, "a") as f:
+            f.write(str(message) + "\n")
 
 
 # endregion Debug Output
@@ -56,21 +61,52 @@ oauth.register(
     client_kwargs={"scope": "openid email profile"},
 )
 
-# I have no idea why the dev version requires every fetch/route to start with "/api".
-# The production version seems to work fine without it.
 
-@app.route("/api/getinfo")
-def getInfo():
-    debug_out("getInfo")
-    user = session.get("user")
-    if user:
-        return jsonify({"email": user["email"]})
-    return jsonify({"email": None})
+# Wrapper object for interacting with database
+class MongoWrapper:
+    def __init__(self, uri):
+        self.client = MongoClient(uri)
 
-@app.route("/api/testfetch")
-def testFetch():
-    debug_out("testfetch")
-    return jsonify({"test": True})
+    def getDatabase(self, dbName):
+        db = self.client[dbName]
+        return db
+
+    def getCollection(self, dbName, colName):
+        col = self.getDatabase(dbName)[colName]
+        return col
+
+    # Insert a single document into the specified collection in the specified collection
+    # The dict that is passed in will have an ObjectID added to it
+    def insertDocument(self, dbName, colName, jsonObj):
+        return self.getCollection(dbName, colName).insert_one(jsonObj)
+
+    # Find a singe document in the specified collection in the specified collection
+    # Returns with a the first matching document
+    # A document is a match if all keys:value pairs in the query dict are present and match
+    def findDocument(self, dbName, colName, jsonObj={}):
+        return self.getCollection(dbName, colName).find_one(jsonObj)
+
+    # Find all documents in the specified collection in the specified collection
+    # Returns with an iterable containing matching documents
+    # A document is a match if all keys:value pairs in the query dict are present and match
+    def searchDocument(self, dbName, colName, jsonObj={}):
+        return self.getCollection(dbName, colName).find(jsonObj)
+
+    # Update a singe document in the specified collection in the specified collection
+    # Updates with a the first matching document
+    # A document is a match if all keys:value pairs in the query dict are present and match
+    # All key:value pairs in the values dict will be added or override those in the document
+    def updateDocument(self, dbName, colName, valuesToSet, jsonObj={}):
+        update_operation = {"$set": valuesToSet}
+        return self.getCollection(dbName, colName).update_one(jsonObj, update_operation)
+
+
+# create a wrapper object using the URI
+mongo = MongoWrapper(os.getenv("MONGO_URI"))
+# print(os.getenv("MONGO_URI"))
+
+DB_USERS = "usersdb"
+COL_USERS = "users"
 
 
 # @app.route("/")
@@ -129,3 +165,24 @@ def logout():
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=8000)
+
+
+# I have no idea why the dev version requires every fetch/route to start with "/api".
+# The production version seems to work fine without it.
+
+
+@app.route("/api/getinfo")
+def getInfo():
+    debug_out("getInfo")
+    user = session.get("user")
+    if user:
+        return jsonify({"email": user["email"]})
+    return jsonify({"email": None})
+
+
+@app.route("/api/testfetch")
+def testFetch():
+    debug_out("testfetch")
+    return jsonify({"test": True})
+
+
