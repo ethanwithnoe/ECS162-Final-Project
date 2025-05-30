@@ -201,8 +201,13 @@ def authorize():
         token, nonce=nonce
     )  # or use .get('userinfo').json()
     session["user"] = user_info
-    return redirect("/")
+    return redirect("/dashboard")
 
+@app.route("/dashboard")
+def dashboard():
+    if isDevEnv:
+        return redirect("http://localhost:5173/dashboard")
+    return send_from_directory('../frontend/src/Dashboard.svelte', "index.html")
 
 @app.route("/logout")
 def logout():
