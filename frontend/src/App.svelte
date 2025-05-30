@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { onMount } from 'svelte';
 	import Home from './Home.svelte'
   import Dashboard from './Dashboard.svelte';

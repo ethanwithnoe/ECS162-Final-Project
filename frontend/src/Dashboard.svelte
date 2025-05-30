@@ -1,18 +1,66 @@
-<script>
-	import Dashboard from './Dashboard.svelte';
-    import { onMount } from 'svelte';
+<script lang="ts">
+    import Dashboard from "./Dashboard.svelte";
+    import { onMount } from "svelte";
     let userEmail = null;
 
     onMount(async () => {
         const res = await fetch("/api/getinfo");
         const data = await res.json();
         if (!data.email) {
-            window.location.href = "/"
-        }
-        else {
+            window.location.href = "/";
+        } else {
             userEmail = data.email;
         }
-    })
+
+        setFriendsList();
+    });
+
+    async function fetchFriendsList() {
+        try {
+            const res = await fetch("/api/get/friendslist");
+            const data = await res.json();
+            return data;
+        } catch (error) {
+            console.log("Error fetching friends list: ", error);
+        }
+    }
+    async function setFriendsList() {
+        const FLelem = <HTMLUListElement>(
+            document.getElementById("friendslist")!
+        );
+
+        // clear current list
+        while (FLelem.lastElementChild) {
+            FLelem.removeChild(FLelem.lastElementChild);
+        }
+
+        const friendslist = await fetchFriendsList();
+        if (friendslist.result == 0) {
+            for (
+                let index = 0;
+                index < friendslist.friendsList.length;
+                index++
+            ) {
+                const friendInfo = friendslist.friendsList[index];
+                const newEntry = <HTMLLIElement>document.createElement("li");
+
+                newEntry.textContent = `${friendInfo[1]} (${friendInfo[0]})`;
+
+                FLelem.appendChild(newEntry);
+            }
+            if (friendslist.friendsList.length == 0) {
+                const newEntry = <HTMLLIElement>document.createElement("li");
+                newEntry.textContent = `Your Friends List is Empty.`;
+                FLelem.appendChild(newEntry);
+            }
+        } else {
+            const newEntry = <HTMLLIElement>document.createElement("li");
+
+            newEntry.textContent = `Error retrieving friends list`;
+
+            FLelem.appendChild(newEntry);
+        }
+    }
 </script>
 
 <div class="dashboard-container">
@@ -25,7 +73,7 @@
             <button>Last Month</button>
         </div>
     </div>
-    <input type="text" placeholder="Search...">
+    <input type="text" placeholder="Search..." />
 
     <div class="summary-cards">
         <div class="card">
@@ -63,7 +111,7 @@
                         <th>Protein</th>
                     </tr>
                 </thead>
-                
+
                 <tbody>
                     <tr>
                         <th>Placeholder</th>
@@ -99,9 +147,9 @@
             </table>
         </div>
 
-        <div class=card>
+        <div class="card">
             <h3>My Friends</h3>
-            <ul>
+            <ul id="friendslist">
                 <li>Name - email</li>
                 <li>Name - email</li>
                 <li>Name - email</li>
@@ -167,7 +215,7 @@
         /* background: ; */
         padding: 1rem;
         border-radius: 8px;
-        box-shadow: 0 0 4px rgba(0,0,0,0,0.05);
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0, 0.05);
     }
 
     .card.large {
@@ -179,7 +227,8 @@
         border-collapse: collapse;
     }
 
-    th,td {
+    th,
+    td {
         text-align: left;
         padding: 0.4rem;
     }

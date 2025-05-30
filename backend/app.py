@@ -180,11 +180,13 @@ def authorize():
     session["user"] = user_info
     return redirect("/dashboard")
 
+
 @app.route("/dashboard")
 def dashboard():
     if isDevEnv:
         return redirect("http://localhost:5173/dashboard")
     return send_from_directory(template_path, "index.html")
+
 
 @app.route("/logout")
 def logout():
@@ -281,6 +283,45 @@ def makeFriends():
         )
 
     return jsonify({"result": 0})
+
+
+# GET route to get friends list.
+# Return codes:
+#     00: Successfully retrieved user's friendlist
+#     10: User is not logged in
+#     11: Unable to retrieve user's friendlist
+@app.route("/api/get/friendslist")
+def getFriendsList():
+    # check that user is logged in
+    user = session.get("user")
+    if not user:
+        return jsonify({"result": 10})
+
+    # get friends list for both parties
+    def getCurrFriendList(who):
+        doc = mongo.findDocument(DB_USERS, COL_USERS, {"email": who})
+        if doc:
+            return doc["friends"]
+        return None
+
+    user_friends = getCurrFriendList(user["email"])
+    # check if failed to get either friendlist
+    if user_friends is None:
+        return jsonify({"result": 11})
+
+    friendsList = []
+    extras = []
+    for friend_email in user_friends:
+        doc = mongo.findDocument(DB_USERS, COL_USERS, {"email": friend_email})
+        if doc:
+            friendsList.append((friend_email, doc["username"]))
+        else:
+            extras.append((friend_email, "Unknown User"))
+
+    friendsList.sort(key=lambda x: x[1])  # sort by username
+    extras.sort(key=lambda x: x[0])  # sort by email
+    friendsList.extend(extras)
+    return jsonify({"result": 0, "friendsList": friendsList})
 
 
 # Production Mode requires this be last.
