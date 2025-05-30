@@ -184,7 +184,7 @@ def authorize():
 def dashboard():
     if isDevEnv:
         return redirect("http://localhost:5173/dashboard")
-    return send_from_directory('../frontend/src/Dashboard.svelte', "index.html")
+    return send_from_directory(template_path, "index.html")
 
 @app.route("/logout")
 def logout():
