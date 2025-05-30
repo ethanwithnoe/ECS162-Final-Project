@@ -105,12 +105,14 @@ class MongoWrapper:
 mongo = MongoWrapper(os.getenv("MONGO_URI"))
 # print(os.getenv("MONGO_URI"))
 
+
+# Database and collection names
 DB_USERS = "usersdb"
 COL_USERS = "users"
 
-"""Function to add Dex accounts to Database
-This is hardcoded, it is not synced with Dex.
-"""
+
+# Function to add Dex accounts to Database
+# This is hardcoded, it is not synced with Dex.
 def addDexUsers():
     users = [
         {
@@ -156,32 +158,7 @@ def addDexUsers():
 
 addDexUsers()
 
-# @app.route("/")
-# def home():
-#     user = session.get("user")
-#     if user:
-#         return f"<h2>Logged in as {user['email']}</h2><a href='/logout'>Logout</a>"
-#     return '<a href="/login">Login with Dex</a>'
-
-
-# @app.route("/")
-# @app.route("/<path:path>")
-# def serve_frontend(path=""):
-#     debug_out("serve_frontend")
-#     if path != "" and os.path.exists(os.path.join(static_path, path)):
-#         return send_from_directory(static_path, path)
-#     return send_from_directory(template_path, "index.html")
-
-
-@app.route("/")
-@app.route("/<path:path>")
-def home(path=""):
-    if isDevEnv:
-        return redirect(f"http://localhost:5173")
-    else:
-        if path != "" and os.path.exists(os.path.join(static_path, path)):
-            return send_from_directory(static_path, path)
-        return send_from_directory(template_path, "index.html")
+# region Dex
 
 
 @app.route("/login")
@@ -210,14 +187,15 @@ def logout():
     return redirect("/")
 
 
-if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=8000)
+# endregion Dex
 
 
 # I have no idea why the dev version requires every fetch/route to start with "/api".
-# The production version seems to work fine without it.
+# The production version seemed to work fine without it.
 
 
+# Route to get the current session's user info
+# currently just returns email, but more might be added later
 @app.route("/api/getinfo")
 def getInfo():
     debug_out("getInfo")
@@ -233,17 +211,16 @@ def testFetch():
     return jsonify({"test": True})
 
 
-"""POST route to make friend.
-Parameters:
-    "email" (str): the email of the friend to add
-Return codes:
-    00: Successfully made friends
-    01: User is already friends
-    10: User is not logged in
-    11: Unable to retrieve user's friendlist
-    12: Unable to retrieve friend's friendlist
-    13: Friend is the current user
-"""
+# POST route to make friend.
+# Parameters:
+#     "email" (str): the email of the friend to add
+# Return codes:
+#     00: Successfully made friends
+#     01: User is already friends
+#     10: User is not logged in
+#     11: Unable to retrieve user's friendlist
+#     12: Unable to retrieve friend's friendlist
+#     13: Friend is the current user
 @app.route("/api/post/makefriend", methods=["POST"])
 def makeFriends():
     response = {}
@@ -251,13 +228,16 @@ def makeFriends():
     debug_out("makefriend")
     debug_out(data)
 
+    # check that user is logged in
     user = session.get("user")
     if not user:
         return jsonify({"result": 10})
 
+    # check if trying to make friends with self
     if user["email"] == data["email"]:
         return jsonify({"result": 13})
 
+    # get friends list for both parties
     def getCurrFriendList(who):
         doc = mongo.findDocument(DB_USERS, COL_USERS, {"email": who})
         if doc:
@@ -267,11 +247,13 @@ def makeFriends():
     user_friends = getCurrFriendList(user["email"])
     friend_friends = getCurrFriendList(data["email"])
 
+    # check if failed to get either friendlist
     if user_friends is None:
         return jsonify({"result": 11})
     if friend_friends is None:
         return jsonify({"result": 12})
 
+    # add friend
     if data["email"] not in user_friends:
         user_friends.append(data["email"])
         mongo.updateDocument(
@@ -281,6 +263,7 @@ def makeFriends():
             {"email": user["email"]},
         )
     else:
+        # already friends
         return jsonify({"result": 1})
 
     if user["email"] not in friend_friends:
@@ -291,4 +274,22 @@ def makeFriends():
             {"friends": friend_friends},
             {"email": data["email"]},
         )
+
     return jsonify({"result": 0})
+
+
+# Production Mode requires this be last.
+# This seems not the case for Dev Mode.
+@app.route("/")
+@app.route("/<path:path>")
+def home(path=""):
+    if isDevEnv:
+        return redirect(f"http://localhost:5173")
+    else:
+        if path != "" and os.path.exists(os.path.join(static_path, path)):
+            return send_from_directory(static_path, path)
+        return send_from_directory(template_path, "index.html")
+
+
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0", port=8000)
