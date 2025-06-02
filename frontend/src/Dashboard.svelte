@@ -3,6 +3,15 @@
     import { onMount } from 'svelte';
     let userEmail = null;
 
+
+    function redirectToDashboard() {
+        window.location.href = "http://localhost:8000/dashboard";
+    }
+
+    function redirectToLogout() {
+        window.location.href = "http://localhost:8000/logout";
+    }
+
     onMount(async () => {
         const res = await fetch("/api/getinfo");
         const data = await res.json();
@@ -16,8 +25,8 @@
 </script>
 
 <div class="dashboard-container">
-    <h1>Dashboard</h1>
-
+    <button onclick={redirectToDashboard}>Dashboard</button>
+    <button onclick={redirectToLogout}>Log Out</button>
     <div class="top-controls">
         <div class="tabs">
             <button>Today</button>
@@ -121,15 +130,15 @@
     .dashboard-container {
         padding: 2rem;
         /* background-color: #fafafa; */
-        background-color: #121212;
+        /* background-color: #121212; */
         color: white;
         font-family: sans-serif;
     }
 
-    h1 {
+    /* h1 {
         font-size: 2rem;
         margin-bottom: 1.5rem;
-    }
+    } */
 
     .top-controls {
         display: flex;
@@ -137,6 +146,7 @@
         align-items: center;
         margin-bottom: 2rem;
         flex-wrap: wrap;
+        /* background-color: #121212; */
     }
 
     .tabs button {
@@ -155,6 +165,7 @@
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
         gap: 1rem;
         margin-bottom: 2rem;
+        /* background-color: #121212; */
     }
 
     .main-grid {
@@ -164,7 +175,7 @@
     }
 
     .card {
-        /* background: ; */
+        background-color: #121212;
         padding: 1rem;
         border-radius: 8px;
         box-shadow: 0 0 4px rgba(0,0,0,0,0.05);
