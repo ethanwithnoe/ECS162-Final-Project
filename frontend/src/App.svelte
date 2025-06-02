@@ -1,7 +1,8 @@
 <script>
   import { onMount } from 'svelte';
-	import Home from './Home.svelte'
+	import Home from './Home.svelte';
   import Dashboard from './Dashboard.svelte';
+  import Meals from './Meals.svelte';
 
   let currentPath = window.location.pathname;
   let loggedIn = false;
@@ -19,6 +20,8 @@
 
 {#if currentPath === '/dashboard' && loggedIn}
   <Dashboard />
+{:else if currentPath === '/meals' && loggedIn}
+  <Meals />
 {:else}
   <Home />
 {/if}

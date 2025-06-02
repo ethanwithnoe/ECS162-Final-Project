@@ -1,5 +1,5 @@
 <script>
-	import Dashboard from './Dashboard.svelte';
+	// import Dashboard from './Dashboard.svelte';
     import { onMount } from 'svelte';
     let userEmail = null;
 
@@ -11,6 +11,11 @@
     function redirectToLogout() {
         window.location.href = "http://localhost:8000/logout";
     }
+
+    function redirectToMeals() {
+        window.location.href = "http://localhost:8000/meals";
+    }
+
 
     onMount(async () => {
         const res = await fetch("/api/getinfo");
@@ -27,6 +32,7 @@
 <div class="dashboard-container">
     <button onclick={redirectToDashboard}>Dashboard</button>
     <button onclick={redirectToLogout}>Log Out</button>
+    <button onclick={redirectToMeals}>Meals</button>
     <div class="top-controls">
         <div class="tabs">
             <button>Today</button>

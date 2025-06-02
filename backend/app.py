@@ -28,8 +28,12 @@ if DEBUG_FILE:
 # function to write to debug file
 def debug_out(message: str):
     if DEBUG_FILE:
-        with open(DEBUG_FILE, "a") as f:
-            f.write(str(message) + "\n")
+        try:
+            with open(DEBUG_FILE, "a") as f:
+                f.write(str(message) + "\n")
+        except Exception as e:
+            print("Debug write failed:", e)
+
 
 
 # endregion Debug Output
@@ -186,7 +190,7 @@ def home(path=""):
 
 @app.route("/login")
 def login():
-    debug_out("login")
+    # debug_out("login")
     session["nonce"] = nonce
     redirect_uri = "http://localhost:8000/authorize"
     return oauth.flask_app.authorize_redirect(redirect_uri, nonce=nonce)
@@ -208,6 +212,12 @@ def dashboard():
     if isDevEnv:
         return redirect("http://localhost:5173/dashboard")
     return send_from_directory('../frontend/src/Dashboard.svelte', "index.html")
+
+@app.route("/meals")
+def meals():
+    if isDevEnv:
+        return redirect("http://localhost:5173/meals")
+    return send_from_directory('../frontend/src/meals.svelte', "index.html")
 
 @app.route("/logout")
 def logout():
