@@ -1,3 +1,4 @@
 **/__pycache__/
 .env
 backend/debug_out.txt
+.DS_Store
