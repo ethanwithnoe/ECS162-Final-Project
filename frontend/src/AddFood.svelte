@@ -5,6 +5,7 @@
     let searchResults: any[] = [];
     let chosenFood: any = null;
     let userMacros = {
+        name: "",
         calories: 0,
         protein: 0,
         fat: 0,
@@ -16,15 +17,22 @@
     async function foodSearch() {
         if(!searchQuery) return;
         try{
-            const res  = await fetch(`http://localhost:8000/api/usda-search?query=${encodeURIComponent(searchQuery)}`);
-            if(!res.ok) {
-                const text = await res.text();
-                console.error("Fetch failed:", res.status, text);
-                return;
-            }
+            const url = `/api/search?query=${encodeURIComponent(searchQuery)}`; //get from backend now
+            const options = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json",
+            },
+        };
+        const res = await fetch(url, options); 
+        if(!res.ok) {
+            const text = await res.text();
+            console.error("Fetch failed:", res.status, text);
+            return;
+        }
             const data = await res.json();
             console.log("search results:", data)
-            searchResults = data;
+            searchResults = data.foods.slice(0, 50); 
         } catch (e) {
             console.error("Network Error:", e);
             searchResults = [];
@@ -33,13 +41,16 @@
     function selectFood(item) {
         chosenFood = item;
         userMacros = {
+            name : item.name ?? 0,
             calories: item.calories ?? 0,
             protein: item.protein ?? 0,
             fat: item.fat ?? 0,
             carbohydrates: item.carbohydrates ?? 0
         };
-        searchResults = [];
+        //COMMENTED OUT TO SEE FOOD BETTER PUT BACK IN ON LATER DATE
+        //searchResults = [];
     }
+    
     async function submitFood() {
         const res = await fetch("/api/addfood", {
             method: "POST",
@@ -50,7 +61,13 @@
         console.log("Saved:", result);
         if(onFoodAdded) onFoodAdded(result);
     }
+
+    function nutrientByName(item: any, nutrientName: string) { 
+        return item.foodNutrients.find((n: any) => n.nutrientName === nutrientName)?.value || "?";
+    }
+
 </script>
+
 <div> 
     <h2> Add Food of Choice! </h2>
     <input type="text" bind:value={searchQuery} placeholder="Search food..." />
@@ -64,11 +81,11 @@
         <ul>
             {#each searchResults as item}
                 <li on:click={() => selectFood(item)}>
-                    <strong>{item.description}</strong><br />
-                    Calories:       {item.calories ?? "?"}kcal |
-                    Protein:        {item.protein ?? "?"}g |
-                    Fat:            {item.fat ?? "?"}g |
-                    Carbohydreates  {item.carbohydrates ?? "?"}g
+                    <strong>{item.brandName ? item.brandName + ":" : ""}</strong> {item.description}<br /> 
+                    Calories:       {nutrientByName(item, "Energy" )} kcal |
+                    Protein:        {nutrientByName(item, "Protein")} g |
+                    Fat:            {nutrientByName(item, "Total lipid (fat)")} g |
+                    Carbohydrates   {nutrientByName(item, "Carbohydrate, by difference")} g
                 </li>
             {/each}
         </ul>
@@ -79,6 +96,7 @@
         <h3> Macros for {chosenFood.description}</h3>
         <table>
             <tbody>
+                <tr><td>Name</td><td><input type="string" bind:value={userMacros.name} /></td></tr>
                 <tr><td>Calories</td><td><input type="number" bind:value={userMacros.calories} /></td></tr>
                 <tr><td>Protein (g)</td><td><input type="number" bind:value={userMacros.protein} /></td></tr>
                 <tr><td>Fat (g)</td><td><input type="number" bind:value={userMacros.fat} /></td></tr>
@@ -94,12 +112,12 @@
     }
     li { 
         margin: 10px 0;
-        background: white;
+        background: grey;
         padding: 10px;
         cursor: pointer;
     }
     li:hover {
-        background: grey;
+        background: rgb(109, 109, 109);
     }
     input[type="text"], input[type="number"] { 
         margin: 5px;

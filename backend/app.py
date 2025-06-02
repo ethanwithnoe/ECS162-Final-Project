@@ -13,6 +13,7 @@ from authlib.common.security import generate_token
 import os
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+import requests
 
 # region Debug Output
 
@@ -292,3 +293,19 @@ def makeFriends():
             {"email": data["email"]},
         )
     return jsonify({"result": 0})
+
+USDA_API_KEY = os.getenv("USDA_API_KEY")
+
+@app.route('/api/search', methods=['GET'])
+def search():
+    query = request.args.get("query")
+    if query is None:
+        return jsonify({"error": "no query"}), 400
+
+    url = f"https://api.nal.usda.gov/fdc/v1/foods/search?api_key={USDA_API_KEY}&query={query}"
+    response = requests.get(url)
+    if response.status_code != 200:
+        return jsonify({"error": "error"}), 500
+
+    data = response.json()
+    return jsonify(data), 200
