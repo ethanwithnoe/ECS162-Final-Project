@@ -217,7 +217,13 @@ def dashboard():
 def meals():
     if isDevEnv:
         return redirect("http://localhost:5173/meals")
-    return send_from_directory('../frontend/src/meals.svelte', "index.html")
+    return send_from_directory('../frontend/src/Meals.svelte', "index.html")
+
+@app.route("/goals")
+def goals():
+    if isDevEnv:
+        return redirect("http://localhost:5173/goals")
+    return send_from_directory('../frontend/src/Goals.svelte', "index.html")
 
 @app.route("/logout")
 def logout():

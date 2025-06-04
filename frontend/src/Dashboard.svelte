@@ -2,7 +2,11 @@
 	// import Dashboard from './Dashboard.svelte';
     import { onMount } from 'svelte';
     let userEmail = null;
+    let showSidebar = false;
 
+    function toggleSidebar() {
+        showSidebar = !showSidebar;
+    }
 
     function redirectToDashboard() {
         window.location.href = "http://localhost:8000/dashboard";
@@ -16,6 +20,9 @@
         window.location.href = "http://localhost:8000/meals";
     }
 
+    function redirectToGoals() {
+        window.location.href = "http://localhost:8000/goals";
+    }
 
     onMount(async () => {
         const res = await fetch("/api/getinfo");
@@ -30,106 +37,108 @@
 </script>
 
 <div class="dashboard-container">
-    <button onclick={redirectToDashboard}>Dashboard</button>
-    <button onclick={redirectToLogout}>Log Out</button>
+    <!-- <button onclick={redirectToDashboard}>Dashboard</button>
     <button onclick={redirectToMeals}>Meals</button>
-    <div class="top-controls">
-        <div class="tabs">
-            <button>Today</button>
-            <button>This Week</button>
-            <button>Last Month</button>
+    <button onclick={redirectToGoals}>My Goals</button>
+    <button onclick={redirectToLogout}>Log Out</button> -->
+    <button class="toggle" onclick={toggleSidebar}>Pages</button>
+        <div class="top-controls">
+            <div class="tabs">
+                <button>Today</button>
+                <button>This Week</button>
+                <button>Last Month</button>
+            </div>
         </div>
-    </div>
-    <input type="text" placeholder="Search...">
+        <input type="text" placeholder="Search...">
 
-    <div class="summary-cards">
-        <div class="card">
-            <h3>Calories</h3>
-            <p>placeholder</p>
-            <small>goal placeholder</small>
-        </div>
+        <div class="summary-cards">
+            <div class="card">
+                <h3>Calories</h3>
+                <p>placeholder</p>
+                <small>goal placeholder</small>
+            </div>
 
-        <div class="card">
-            <h3>Protein</h3>
-            <p>placeholder</p>
-            <small>goal placeholder</small>
-        </div>
+            <div class="card">
+                <h3>Protein</h3>
+                <p>placeholder</p>
+                <small>goal placeholder</small>
+            </div>
 
-        <div class="card">
-            <h3>Steps</h3>
-            <p>placeholder</p>
-            <small>goal placeholder</small>
-        </div>
-    </div>
-
-    <div class="main-grid">
-        <div class="card large">
-            <h3>Today's Calories</h3>
-            <div class="graph-placeholder">[Bar Graph]</div>
+            <div class="card">
+                <h3>Steps</h3>
+                <p>placeholder</p>
+                <small>goal placeholder</small>
+            </div>
         </div>
 
-        <div class="card">
-            <h3>Add from My Meals</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Calories</th>
-                        <th>Protein</th>
-                    </tr>
-                </thead>
-                
-                <tbody>
-                    <tr>
-                        <th>Placeholder</th>
-                        <th>Placeholder</th>
-                        <th>Placeholder</th>
-                    </tr>
-                    <tr>
-                        <th>Placeholder</th>
-                        <th>Placeholder</th>
-                        <th>Placeholder</th>
-                    </tr>
-                    <tr>
-                        <th>Placeholder</th>
-                        <th>Placeholder</th>
-                        <th>Placeholder</th>
-                    </tr>
-                    <tr>
-                        <th>Placeholder</th>
-                        <th>Placeholder</th>
-                        <th>Placeholder</th>
-                    </tr>
-                    <tr>
-                        <th>Placeholder</th>
-                        <th>Placeholder</th>
-                        <th>Placeholder</th>
-                    </tr>
-                    <tr>
-                        <th>Placeholder</th>
-                        <th>Placeholder</th>
-                        <th>Placeholder</th>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <div class="main-grid">
+            <div class="card large">
+                <h3>Today's Calories</h3>
+                <div class="graph-placeholder">[Bar Graph]</div>
+            </div>
 
-        <div class=card>
-            <h3>My Friends</h3>
-            <ul>
-                <li>Name - email</li>
-                <li>Name - email</li>
-                <li>Name - email</li>
-                <li>Name - email</li>
-                <li>Name - email</li>
-                <li>Name - email</li>
-            </ul>
+            <div class="card">
+                <h3>Add from My Meals</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Calories</th>
+                            <th>Protein</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        <tr>
+                            <th>Placeholder</th>
+                            <th>Placeholder</th>
+                            <th>Placeholder</th>
+                        </tr>
+                        <tr>
+                            <th>Placeholder</th>
+                            <th>Placeholder</th>
+                            <th>Placeholder</th>
+                        </tr>
+                        <tr>
+                            <th>Placeholder</th>
+                            <th>Placeholder</th>
+                            <th>Placeholder</th>
+                        </tr>
+                        <tr>
+                            <th>Placeholder</th>
+                            <th>Placeholder</th>
+                            <th>Placeholder</th>
+                        </tr>
+                        <tr>
+                            <th>Placeholder</th>
+                            <th>Placeholder</th>
+                            <th>Placeholder</th>
+                        </tr>
+                        <tr>
+                            <th>Placeholder</th>
+                            <th>Placeholder</th>
+                            <th>Placeholder</th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class=card>
+                <h3>My Friends</h3>
+                <ul>
+                    <li>Name - email</li>
+                    <li>Name - email</li>
+                    <li>Name - email</li>
+                    <li>Name - email</li>
+                    <li>Name - email</li>
+                    <li>Name - email</li>
+                </ul>
+            </div>
+            <div class="card large">
+                <h3>Today's Steps</h3>
+                <div class="graph-placeholder">[Line Graph]</div>
+            </div>
         </div>
-        <div class="card large">
-            <h3>Today's Steps</h3>
-            <div class="graph-placeholder">[Line Graph]</div>
-        </div>
-    </div>
 </div>
 
 <style>
@@ -219,4 +228,5 @@
         background-color: #121212;
         color: white;
     }
+
 </style>

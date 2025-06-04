@@ -3,6 +3,7 @@
 	import Home from './Home.svelte';
   import Dashboard from './Dashboard.svelte';
   import Meals from './Meals.svelte';
+  import Goals from './Goals.svelte';
 
   let currentPath = window.location.pathname;
   let loggedIn = false;
@@ -22,6 +23,8 @@
   <Dashboard />
 {:else if currentPath === '/meals' && loggedIn}
   <Meals />
+{:else if currentPath === '/goals' && loggedIn}
+  <Goals />
 {:else}
   <Home />
 {/if}

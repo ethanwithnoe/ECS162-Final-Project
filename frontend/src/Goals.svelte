@@ -1,6 +1,6 @@
 <script>
 	// import Dashboard from './Dashboard.svelte';
-
+    // import Meals from './Meals.svelte';
     let showSidebar = false;
 
     function toggleSidebar() {
@@ -23,10 +23,10 @@
         window.location.href = "http://localhost:8000/goals";
     }
 
-    const meals = [
-        {type: "placeholder1", name: "Meal"},
-        {type: "placeholder2", name: "Meal"},
-        {type: "placeholder3", name: "Meal"},
+    const goals = [
+        {type: "placeholder1", name: "goal"},
+        {type: "placeholder2", name: "goal"},
+        {type: "placeholder3", name: "goal"},
     ];
 </script>
 
@@ -62,10 +62,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {#each meals as meal}
+                    {#each goals as goal}
                         <tr>
-                            <td>{meal.type}</td>
-                            <td>{meal.name}</td>
+                            <td>{goal.type}</td>
+                            <td>{goal.name}</td>
                             <td><span class="value">Value</span></td>
                             <td><span class="value">Value</span></td>
                             <td><span class="value">Value</span></td>
