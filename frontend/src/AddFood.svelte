@@ -38,14 +38,14 @@
             searchResults = [];
         }
     }
-    function selectFood(item) {
+    function selectFood(item: any) {
         chosenFood = item;
         userMacros = {
-            name : item.name ?? 0,
-            calories: item.calories ?? 0,
-            protein: item.protein ?? 0,
-            fat: item.fat ?? 0,
-            carbohydrates: item.carbohydrates ?? 0
+            name : item.description ?? 0,
+            calories: nutrientByName(item, "Energy") ?? 0,
+            protein: nutrientByName(item, "Protein") ?? 0,
+            fat: nutrientByName(item, "Total lipid (fat)") ?? 0,
+            carbohydrates: nutrientByName(item, "Carbohydrate, by difference") ?? 0
         };
         //COMMENTED OUT TO SEE FOOD BETTER PUT BACK IN ON LATER DATE
         //searchResults = [];

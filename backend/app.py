@@ -14,6 +14,7 @@ import os
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 import requests
+from datetime import datetime, timezone
 
 # region Debug Output
 
@@ -63,6 +64,8 @@ oauth.register(
 )
 
 
+
+
 # Wrapper object for interacting with database
 class MongoWrapper:
     def __init__(self, uri):
@@ -105,7 +108,8 @@ class MongoWrapper:
 # create a wrapper object using the URI
 mongo = MongoWrapper(os.getenv("MONGO_URI"))
 # print(os.getenv("MONGO_URI"))
-
+DB_FOOD = "fooddb"
+COL_FOOD = "food"
 DB_USERS = "usersdb"
 COL_USERS = "users"
 
@@ -309,3 +313,24 @@ def search():
 
     data = response.json()
     return jsonify(data), 200
+
+@app.route('/api/addfood', methods=['POST'])
+def addfood():
+    data = request.json
+    data["userid"] = session.get("user", {}).get("userID", "INVALID")
+    data["timestamp"] = datetime.now(timezone.utc).isoformat()
+
+    result = mongo.insertDocument(DB_FOOD, COL_FOOD, data)  
+    
+    return jsonify({
+        # add brand name and useid and timestamp
+        "userid": data.get("userid"),
+        "timestamp": data.get("timestamp"),
+        "brand": data.get("brand"),
+        "name": data.get("name"),
+        "calories": data.get("calories"),
+        "protein": data.get("protein"),
+        "fat": data.get("fat"),
+        "carbohydrates": data.get("carbohydrates"),
+        "inserted_id": str(result.inserted_id)
+    }), 201
