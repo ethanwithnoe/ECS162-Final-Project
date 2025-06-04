@@ -1,7 +1,9 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-	import Home from './Home.svelte'
+	import Home from './Home.svelte';
   import Dashboard from './Dashboard.svelte';
+  import Meals from './Meals.svelte';
+  import Goals from './Goals.svelte';
 
   let currentPath = window.location.pathname;
   let loggedIn = false;
@@ -19,6 +21,10 @@
 
 {#if currentPath === '/dashboard' && loggedIn}
   <Dashboard />
+{:else if currentPath === '/meals' && loggedIn}
+  <Meals />
+{:else if currentPath === '/goals' && loggedIn}
+  <Goals />
 {:else}
   <Home />
 {/if}

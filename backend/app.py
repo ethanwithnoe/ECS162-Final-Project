@@ -28,8 +28,12 @@ if DEBUG_FILE:
 # function to write to debug file
 def debug_out(message: str):
     if DEBUG_FILE:
-        with open(DEBUG_FILE, "a") as f:
-            f.write(str(message) + "\n")
+        try:
+            with open(DEBUG_FILE, "a") as f:
+                f.write(str(message) + "\n")
+        except Exception as e:
+            print("Debug write failed:", e)
+
 
 
 # endregion Debug Output
@@ -163,7 +167,7 @@ addDexUsers()
 
 @app.route("/login")
 def login():
-    debug_out("login")
+    # debug_out("login")
     session["nonce"] = nonce
     redirect_uri = "http://localhost:8000/authorize"
     return oauth.flask_app.authorize_redirect(redirect_uri, nonce=nonce)
@@ -187,6 +191,18 @@ def dashboard():
         return redirect("http://localhost:5173/dashboard")
     return send_from_directory(template_path, "index.html")
 
+
+@app.route("/meals")
+def meals():
+    if isDevEnv:
+        return redirect("http://localhost:5173/meals")
+    return send_from_directory('../frontend/src/Meals.svelte', "index.html")
+
+@app.route("/goals")
+def goals():
+    if isDevEnv:
+        return redirect("http://localhost:5173/goals")
+    return send_from_directory('../frontend/src/Goals.svelte', "index.html")
 
 @app.route("/logout")
 def logout():
@@ -295,7 +311,7 @@ def makeFriends():
 #     12: Unable to retrieve friend's friendlist
 #     13: Friend is the current user
 @app.route("/api/post/removefriend", methods=["POST"])
-def makeFriends():
+def removeFriends():
     response = {}
     data = request.form
     debug_out("removefriend")

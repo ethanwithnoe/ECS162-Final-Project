@@ -45,9 +45,9 @@
         window.location.href = "http://localhost:8000/logout";
     }
 
-    function goToDashboard() {
-        window.location.href = '/dashboard';
-    }
+    // function goToDashboard() {
+    //     window.location.href = '/dashboard';
+    // }
 
     async function getinfo() {
         try {
