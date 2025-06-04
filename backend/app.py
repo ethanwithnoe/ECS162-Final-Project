@@ -284,6 +284,72 @@ def makeFriends():
 
     return jsonify({"result": 0})
 
+# POST route to remove friend.
+# Parameters:
+#     "email" (str): the email of the friend to remove
+# Return codes:
+#     00: Successfully removed friend
+#     01: User is already not friends
+#     10: User is not logged in
+#     11: Unable to retrieve user's friendlist
+#     12: Unable to retrieve friend's friendlist
+#     13: Friend is the current user
+@app.route("/api/post/removefriend", methods=["POST"])
+def makeFriends():
+    response = {}
+    data = request.form
+    debug_out("removefriend")
+    debug_out(data)
+
+    # check that user is logged in
+    user = session.get("user")
+    if not user:
+        return jsonify({"result": 10})
+
+    # check if trying to unfriend themself
+    if user["email"] == data["email"]:
+        return jsonify({"result": 13})
+
+    # get friends list for both parties
+    def getCurrFriendList(who):
+        doc = mongo.findDocument(DB_USERS, COL_USERS, {"email": who})
+        if doc:
+            return doc["friends"]
+        return None
+
+    user_friends = getCurrFriendList(user["email"])
+    friend_friends = getCurrFriendList(data["email"])
+
+    # check if failed to get either friendlist
+    if user_friends is None:
+        return jsonify({"result": 11})
+    if friend_friends is None:
+        return jsonify({"result": 12})
+
+    # remove friend
+    if data["email"] in user_friends:
+        user_friends.remove(data["email"])
+        mongo.updateDocument(
+            DB_USERS,
+            COL_USERS,
+            {"friends": user_friends},
+            {"email": user["email"]},
+        )
+    else:
+        # already not friends
+        return jsonify({"result": 1})
+
+    if user["email"] in friend_friends:
+        friend_friends.remove(user["email"])
+        mongo.updateDocument(
+            DB_USERS,
+            COL_USERS,
+            {"friends": friend_friends},
+            {"email": data["email"]},
+        )
+
+    return jsonify({"result": 0})
+
 
 # GET route to get friends list.
 # Return codes:
