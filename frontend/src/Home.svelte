@@ -1,36 +1,38 @@
 <script lang="ts">
+    import  AddFood  from "./AddFood.svelte";
     import { onMount } from "svelte";
-//   import Dashboard from './Dashboard.svelte';
+    //   import Dashboard from './Dashboard.svelte';
 
+    let showAddFood = false;
     onMount(async () => {
-    // const res = await fetch('/getinfo');
-    // const data = await res.json();
-    // console.log(data);
-    let userEmail = null;
-    let loggedIn = false;
-    try {
-        const res = await fetch("/api/getinfo");
-        const data = await res.json();
-        console.log(data);
-        if (data.email) {
-            loggedIn = true;
-            userEmail = data.email
+        // const res = await fetch('/getinfo');
+        // const data = await res.json();
+        // console.log(data);
+        let userEmail = null;
+        let loggedIn = false;
+        try {
+            const res = await fetch("/api/getinfo");
+            const data = await res.json();
+            console.log(data);
+            if (data.email) {
+                loggedIn = true;
+                userEmail = data.email;
+            }
+        } catch (error) {
+            console.error("Failed to fetch info:", error);
         }
-    } catch (error) {
-        console.error("Failed to fetch info:", error);
-    }
 
-    document
-        .getElementById("TESTFORM")!
-        .addEventListener("submit", function (e: SubmitEvent) {
-        e.preventDefault();
+        document
+            .getElementById("TESTFORM")!
+            .addEventListener("submit", function (e: SubmitEvent) {
+                e.preventDefault();
 
-        // See backend for return codes
+                // See backend for return codes
 
-        let form = <HTMLElement>e.target!;
-        let textinput = (<HTMLInputElement>form.children[1]).value;
-        makeFriend(textinput);
-        });
+                let form = <HTMLElement>e.target!;
+                let textinput = (<HTMLInputElement>form.children[1]).value;
+                makeFriend(textinput);
+            });
     });
     /**
      * function to redirect to the login page
@@ -61,32 +63,39 @@
 
     async function testFetch() {
         try {
-        const res = await fetch("/api/testfetch");
-        // console.log(res);
-        const data = await res.json();
-        console.log(data);
+            const res = await fetch("/api/testfetch");
+            // console.log(res);
+            const data = await res.json();
+            console.log(data);
         } catch (error) {
-        console.error("Failed fetch test:", error);
+            console.error("Failed fetch test:", error);
         }
     }
 
     async function makeFriend(friend_email: string) {
         try {
-        let postdata = new FormData();
-        postdata.append("email", friend_email);
+            let postdata = new FormData();
+            postdata.append("email", friend_email);
 
-        const res = await fetch("/api/post/makefriend", {
-            method: "POST",
-            body: postdata,
-        });
-        const data = await res.json();
-        console.log(data);
+            const res = await fetch("/api/post/makefriend", {
+                method: "POST",
+                body: postdata,
+            });
+            const data = await res.json();
+            console.log(data);
         } catch (error) {
-        console.error("Failed to make friends:", error);
+            console.error("Failed to make friends:", error);
         }
     }
 
     let currentRoute = window.location.pathname;
+    async function handleFoodAdded(foodData: any) {
+        console.log("Food added:", foodData);
+        showAddFood = false;
+    }
+    async function toggleAddFood() {
+        showAddFood = !showAddFood;
+    }
 </script>
 
 <main>
@@ -98,6 +107,10 @@
             <button onclick={redirectToLogout}> TESTBUTTON LOGOUT </button>
             <button onclick={getinfo}> TESTBUTTON GETINFO </button>
             <button onclick={testFetch}> TESTBUTTON TESTFETCH </button>
+            <button onclick={toggleAddFood}> + </button>
+            {#if showAddFood}
+                <AddFood onFoodAdded={handleFoodAdded} />
+            {/if}
         </div>
         <!-- See onMount for how this is implemented -->
         <div class="form-row">

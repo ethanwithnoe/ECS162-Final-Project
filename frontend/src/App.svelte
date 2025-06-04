@@ -7,7 +7,6 @@
 
   let currentPath = window.location.pathname;
   let loggedIn = false;
-
   onMount(async () => {
     const res = await fetch("/api/getinfo");
     const data = await res.json();

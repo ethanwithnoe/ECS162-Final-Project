@@ -13,6 +13,8 @@ from authlib.common.security import generate_token
 import os
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+import requests
+from datetime import datetime, timezone
 
 # region Debug Output
 
@@ -66,6 +68,8 @@ oauth.register(
 )
 
 
+
+
 # Wrapper object for interacting with database
 class MongoWrapper:
     def __init__(self, uri):
@@ -108,9 +112,9 @@ class MongoWrapper:
 # create a wrapper object using the URI
 mongo = MongoWrapper(os.getenv("MONGO_URI"))
 # print(os.getenv("MONGO_URI"))
-
-
 # Database and collection names
+DB_FOOD = "fooddb"
+COL_FOOD = "food"
 DB_USERS = "usersdb"
 COL_USERS = "users"
 
@@ -421,3 +425,42 @@ def home(path=""):
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=8000)
+
+USDA_API_KEY = os.getenv("USDA_API_KEY")
+
+# This can fail if the url gets blocked by your VPN
+
+@app.route('/api/search', methods=['GET'])
+def search():
+    query = request.args.get("query")
+    if query is None:
+        return jsonify({"error": "no query"}), 400
+
+    url = f"https://api.nal.usda.gov/fdc/v1/foods/search?api_key={USDA_API_KEY}&query={query}"
+    response = requests.get(url)
+    if response.status_code != 200:
+        return jsonify({"error": "error"}), 500
+
+    data = response.json()
+    return jsonify(data), 200
+
+@app.route('/api/addfood', methods=['POST'])
+def addfood():
+    data = request.json
+    data["userid"] = session.get("user", {}).get("userID", "INVALID")
+    data["timestamp"] = datetime.now(timezone.utc).isoformat()
+
+    result = mongo.insertDocument(DB_FOOD, COL_FOOD, data)  
+    
+    return jsonify({
+        # add brand name and useid and timestamp
+        "userid": data.get("userid"),
+        "timestamp": data.get("timestamp"),
+        "brand": data.get("brand"),
+        "name": data.get("name"),
+        "calories": data.get("calories"),
+        "protein": data.get("protein"),
+        "fat": data.get("fat"),
+        "carbohydrates": data.get("carbohydrates"),
+        "inserted_id": str(result.inserted_id)
+    }), 201
