@@ -447,7 +447,7 @@ def search():
 @app.route('/api/addfood', methods=['POST'])
 def addfood():
     data = request.json
-    data["userid"] = session.get("user", {}).get("userID", "INVALID")
+    data["userid"] = session.get("user", {}).get("email", "INVALID")
     data["timestamp"] = datetime.now(timezone.utc).isoformat()
 
     result = mongo.insertDocument(DB_FOOD, COL_FOOD, data)  

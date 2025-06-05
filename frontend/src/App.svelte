@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-	import Home from './Home.svelte';
+  import Home from './Home.svelte';
   import Dashboard from './Dashboard.svelte';
   import Meals from './Meals.svelte';
   import Goals from './Goals.svelte';

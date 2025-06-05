@@ -109,6 +109,8 @@
 <style>
     ul {list-style: none; 
         padding: 0; 
+        max-height: 300px;
+        overflow-y: auto; 
     }
     li { 
         margin: 10px 0;
@@ -123,6 +125,7 @@
         margin: 5px;
     }
     table {
+        max-height: 200px;
         margin-top: 10px;
     }
     td {
