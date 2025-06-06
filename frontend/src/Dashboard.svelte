@@ -1,8 +1,22 @@
 <script lang="ts">
 	// import Dashboard from './Dashboard.svelte';
     import { onMount } from 'svelte';
+    import BarChart from '../components/BarChart.svelte';
     let userEmail = null;
     let showSidebar = false;
+
+    /* Testing stuff for the graph*/
+    //Props, just hardcoding them to see if they work
+    // CURRENT ISSUES; the bar chart is not cumulative.
+    let nutrient: "calories" | "protein" | "fat" | "carbohydrates" = 'calories';
+    let goal = 2000;
+    let buffer = 100;
+    let foodLogs = [
+        { timestamp: new Date(2025, 5, 6, 7, 15).toISOString(), calories: 200, protein: 15, fat: 10, carbohydrates: 30 },
+        { timestamp: new Date(2025, 5, 6, 9, 45).toISOString(), calories: 300, protein: 25, fat: 15, carbohydrates: 40 },
+        { timestamp: new Date(2025, 5, 6, 12, 30).toISOString(), calories: 500, protein: 40, fat: 20, carbohydrates: 60 },
+];
+    /* End Testing stuff for the graph */
 
     function toggleSidebar() {
         showSidebar = !showSidebar;
@@ -122,7 +136,7 @@
         <div class="main-grid">
             <div class="card large">
                 <h3>Today's Calories</h3>
-                <div class="graph-placeholder">[Bar Graph]</div>
+                <BarChart {nutrient} {goal} {buffer} {foodLogs} />
             </div>
 
             <div class="card">
