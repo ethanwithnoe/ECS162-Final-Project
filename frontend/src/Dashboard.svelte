@@ -15,7 +15,7 @@
             "protein": 20,
             "description": "Morning Oatmeal",
             "name": "Oatmeal",
-            "timestamp": "2025-06-08T08:00:00.000000+00:00",
+            "timestamp": "2025-06-08T08:00:00.000000-08:00", //Changing to California time zone to test daily line chart.
             "userid": "admin@hw3.com",
             "_id": "6844d54141d108c473d72fd9"
         },
@@ -26,7 +26,7 @@
             "protein": 25,
             "description": "Chicken Salad",
             "name": "Grilled Chicken Salad",
-            "timestamp": "2025-06-08T10:15:00.000000+00:00",
+            "timestamp": "2025-06-08T10:15:00.000000-08:00",
             "userid": "admin@hw3.com",
             "_id": "6844d54141d108c473d72fd9"
         },
@@ -37,7 +37,7 @@
             "protein": 10,
             "description": "Apple and Peanut Butter",
             "name": "Snack",
-            "timestamp": "2025-06-08T12:30:00.000000+00:00",
+            "timestamp": "2025-06-08T12:30:00.000000-08:00",
             "userid": "admin@hw3.com",
             "_id": "6844d54141d108c473d72fe1"
         },
@@ -46,9 +46,9 @@
             "carbohydrates": 75,
             "fat": 20,
             "protein": 40,
-            "description": "Dinner – Steak and Potatoes",
+            "description": "Dinner - Steak and Potatoes",
             "name": "Steak Dinner",
-            "timestamp": "2025-06-08T17:00:00.000000+00:00",
+            "timestamp": "2025-06-08T17:00:00.000000-08:00",
             "userid": "admin@hw3.com",
             "_id": "6844d54141d108c473d72fe2"
         },
@@ -59,7 +59,7 @@
             "protein": 15,
             "description": "Evening Smoothie",
             "name": "Smoothie",
-            "timestamp": "2025-06-08T20:00:00.000000+00:00",
+            "timestamp": "2025-06-08T20:00:00.000000-08:00",
             "userid": "admin@hw3.com",
             "_id": "6844d54141d108c473d72fe3"
         }
@@ -274,7 +274,7 @@
             </div>
             <div class="card large">
                 <h3>Today's Calories</h3>
-                <LineChart {filteredData} {goalValue} {buffer} height={200} width={600} selectedNutrient={selectedNutrient} />
+                <LineChart {filteredData} {goalValue} {buffer} height={400} width={600} selectedNutrient={selectedNutrient} />
             </div>
         </div>
 </div>
