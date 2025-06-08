@@ -3,7 +3,7 @@
     import * as d3 from 'd3';
 
     // Working Chart Version!
-    // Playing to the strengths of the line chart; dyamic X axis for time. Bar chart will display the entire day.
+    // Playing to the strengths of the line chart; dynamic X axis for time. Bar chart will display the entire day.
     // D3 set up with our project, must be done in frontend
     /*
         cd frontend

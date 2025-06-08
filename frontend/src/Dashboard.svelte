@@ -2,6 +2,7 @@
 	// import Dashboard from './Dashboard.svelte';
     import { onMount } from 'svelte';
     import LineChart from '../components/LineChart.svelte';
+    import BarChart from '../components/BarChart.svelte';
 
     // Mock data to test the graph
     /* 
@@ -15,9 +16,9 @@
             "protein": 20,
             "description": "Morning Oatmeal",
             "name": "Oatmeal",
-            "timestamp": "2025-06-08T08:00:00.000000-08:00", //Changing to California time zone to test daily line chart.
+            "timestamp": "2025-06-08T08:00:00.000000-08:00", // 8:00 AM > falls into the 8 AM bin
             "userid": "admin@hw3.com",
-            "_id": "6844d54141d108c473d72fd9"
+            "_id": "119"
         },
         {
             "calories": 450,
@@ -28,7 +29,7 @@
             "name": "Grilled Chicken Salad",
             "timestamp": "2025-06-08T10:15:00.000000-08:00",
             "userid": "admin@hw3.com",
-            "_id": "6844d54141d108c473d72fd9"
+            "_id": "11"
         },
         {
             "calories": 150,
@@ -39,7 +40,7 @@
             "name": "Snack",
             "timestamp": "2025-06-08T12:30:00.000000-08:00",
             "userid": "admin@hw3.com",
-            "_id": "6844d54141d108c473d72fe1"
+            "_id": "11"
         },
         {
             "calories": 600,
@@ -50,7 +51,7 @@
             "name": "Steak Dinner",
             "timestamp": "2025-06-08T17:00:00.000000-08:00",
             "userid": "admin@hw3.com",
-            "_id": "6844d54141d108c473d72fe2"
+            "_id": "11"
         },
         {
             "calories": 200,
@@ -61,7 +62,7 @@
             "name": "Smoothie",
             "timestamp": "2025-06-08T20:00:00.000000-08:00",
             "userid": "admin@hw3.com",
-            "_id": "6844d54141d108c473d72fe3"
+            "_id": "11"
         }
     ];
 
@@ -212,7 +213,16 @@
         <div class="main-grid">
             <div class="card large">
                 <h3>Today's Calories</h3>
-                <div class="graph-placeholder">[Bar Graph]</div>
+                <BarChart
+                    {filteredData}
+                    {goalValue}
+                    {buffer}
+                    height={400}
+                    width={600}
+                    selectedNutrient={selectedNutrient}
+                    startHour={6}
+                    endHour={24}
+                />
             </div>
 
             <div class="card">
@@ -274,7 +284,14 @@
             </div>
             <div class="card large">
                 <h3>Today's Calories</h3>
-                <LineChart {filteredData} {goalValue} {buffer} height={400} width={600} selectedNutrient={selectedNutrient} />
+                <LineChart 
+                    {filteredData} 
+                    {goalValue} 
+                    {buffer} 
+                    height={400} 
+                    width={600} 
+                    selectedNutrient={selectedNutrient}
+                />
             </div>
         </div>
 </div>
