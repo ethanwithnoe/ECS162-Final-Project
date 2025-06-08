@@ -14,7 +14,7 @@ import os
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 import requests
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 # region Debug Output
 
@@ -35,7 +35,6 @@ def debug_out(message: str):
                 f.write(str(message) + "\n")
         except Exception as e:
             print("Debug write failed:", e)
-
 
 
 # endregion Debug Output
@@ -66,8 +65,6 @@ oauth.register(
     device_authorization_endpoint="http://dex:5556/device/code",
     client_kwargs={"scope": "openid email profile"},
 )
-
-
 
 
 # Wrapper object for interacting with database
@@ -200,13 +197,15 @@ def dashboard():
 def meals():
     if isDevEnv:
         return redirect("http://localhost:5173/meals")
-    return send_from_directory('../frontend/src/Meals.svelte', "index.html")
+    return send_from_directory("../frontend/src/Meals.svelte", "index.html")
+
 
 @app.route("/goals")
 def goals():
     if isDevEnv:
         return redirect("http://localhost:5173/goals")
-    return send_from_directory('../frontend/src/Goals.svelte', "index.html")
+    return send_from_directory("../frontend/src/Goals.svelte", "index.html")
+
 
 @app.route("/logout")
 def logout():
@@ -236,6 +235,9 @@ def getInfo():
 def testFetch():
     debug_out("testfetch")
     return jsonify({"test": True})
+
+
+# region Friends
 
 
 # POST route to make friend.
@@ -303,6 +305,7 @@ def makeFriends():
         )
 
     return jsonify({"result": 0})
+
 
 # POST route to remove friend.
 # Parameters:
@@ -410,6 +413,9 @@ def getFriendsList():
     return jsonify({"result": 0, "friendsList": friendsList})
 
 
+# endregion Friends
+
+
 # Production Mode requires this be last.
 # This seems not the case for Dev Mode.
 @app.route("/")
@@ -426,11 +432,14 @@ def home(path=""):
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=8000)
 
+# region Food Tracking
+
 USDA_API_KEY = os.getenv("USDA_API_KEY")
 
 # This can fail if the url gets blocked by your VPN
 
-@app.route('/api/search', methods=['GET'])
+
+@app.route("/api/search", methods=["GET"])
 def search():
     query = request.args.get("query")
     if query is None:
@@ -444,23 +453,101 @@ def search():
     data = response.json()
     return jsonify(data), 200
 
-@app.route('/api/addfood', methods=['POST'])
+
+@app.route("/api/addfood", methods=["POST"])
 def addfood():
     data = request.json
     data["userid"] = session.get("user", {}).get("email", "INVALID")
     data["timestamp"] = datetime.now(timezone.utc).isoformat()
 
-    result = mongo.insertDocument(DB_FOOD, COL_FOOD, data)  
-    
-    return jsonify({
-        # add brand name and useid and timestamp
-        "userid": data.get("userid"),
-        "timestamp": data.get("timestamp"),
-        "brand": data.get("brand"),
-        "name": data.get("name"),
-        "calories": data.get("calories"),
-        "protein": data.get("protein"),
-        "fat": data.get("fat"),
-        "carbohydrates": data.get("carbohydrates"),
-        "inserted_id": str(result.inserted_id)
-    }), 201
+    result = mongo.insertDocument(DB_FOOD, COL_FOOD, data)
+
+    return (
+        jsonify(
+            {
+                # add brand name and useid and timestamp
+                "userid": data.get("userid"),
+                "timestamp": data.get("timestamp"),
+                "brand": data.get("brand"),
+                "name": data.get("name"),
+                "calories": data.get("calories"),
+                "protein": data.get("protein"),
+                "fat": data.get("fat"),
+                "carbohydrates": data.get("carbohydrates"),
+                "inserted_id": str(result.inserted_id),
+            }
+        ),
+        201,
+    )
+
+
+# GET route to get user's logged foods.
+# Query:
+#     range (Optional): One of "today", "week", "month", or "custom"
+#       Specifies the time range to filter foods from.
+#       If not one of the above values or not specified, defaults to show all foods.
+#     earliest (Optional): a date (UTC) in YYYY-MM-DD format
+#       When range is set to "custom", defines the lower bound of the filtered time range
+#       If not specified, the time range will be unbonded.
+#     latest (Optional): a date (UTC) in YYYY-MM-DD format
+#       When range is set to "custom", defines the upper bound of the filtered time range
+#       If not specified, the time range will be unbonded.
+# Return codes:
+#     00: Successfully retrieved user's logged foods
+#     10: User is not logged in
+@app.route("/api/getuserfoods", methods=["GET"])
+def getUserFoods():
+    # check that user is logged in
+    user = session.get("user")
+    if not user:
+        return jsonify({"result": 10})
+
+    # define time range
+    latest = None
+    earliest = None
+
+    timeRange = request.args.get("range")
+    if timeRange == "custom":
+        arg_earliest = request.args.get("earliest")
+        arg_latest = request.args.get("latest")
+
+        if arg_earliest:
+            earliest = datetime.fromisoformat(arg_earliest)
+            earliest = earliest.replace(tzinfo=timezone.utc)
+        if arg_latest:
+            latest = datetime.fromisoformat(arg_latest)
+            latest = latest.replace(tzinfo=timezone.utc)
+
+    elif timeRange == "today":
+        latest = datetime.now(timezone.utc)  # now
+        earliest = latest - timedelta(days=1)
+    elif timeRange == "week":
+        latest = datetime.now(timezone.utc)  # now
+        earliest = latest - timedelta(days=7)
+    elif timeRange == "month":
+        latest = datetime.now(timezone.utc)  # now
+        earliest = latest - timedelta(days=30)
+    else:
+        pass
+
+    # get all foods logged by the user
+    docs = mongo.searchDocument(DB_FOOD, COL_FOOD, {"userid": user["email"]})
+
+    foodList = []
+
+    # search through foods
+    for doc in docs:
+        # check if within the specified timeframe
+        timestamp = datetime.fromisoformat(doc["timestamp"])
+        # return {"e":earliest,"t":timestamp}
+        if (earliest is None or timestamp > earliest) and (
+            latest is None or timestamp < latest
+        ):
+            jsonDoc = doc.copy()
+            # convert ObjectID to string
+            jsonDoc["_id"] = str(jsonDoc["_id"])
+            foodList.append(jsonDoc)
+    return jsonify({"result": 0, "foodList": foodList})
+
+
+# endregion Food Tracking

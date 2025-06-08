@@ -71,6 +71,16 @@
             console.error("Failed fetch test:", error);
         }
     }
+    async function getFoodList() {
+        try {
+            const res = await fetch(`/api/getuserfoods?range=${encodeURIComponent("custom")}&earliest=${encodeURIComponent("2025-05-09")}`);
+            // console.log(res);
+            const data = await res.json();
+            console.log(data);
+        } catch (error) {
+            console.error("Failed fetch test:", error);
+        }
+    }
 
     async function makeFriend(friend_email: string) {
         try {
@@ -107,6 +117,7 @@
             <button onclick={redirectToLogout}> TESTBUTTON LOGOUT </button>
             <button onclick={getinfo}> TESTBUTTON GETINFO </button>
             <button onclick={testFetch}> TESTBUTTON TESTFETCH </button>
+            <button onclick={getFoodList}> TESTBUTTON GETFOODLIST </button>
             <button onclick={toggleAddFood}> + </button>
             {#if showAddFood}
                 <AddFood onFoodAdded={handleFoodAdded} />
