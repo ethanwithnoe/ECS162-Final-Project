@@ -89,6 +89,12 @@
     <button onclick={redirectToMeals}>Meals</button>
     <button onclick={redirectToGoals}>My Goals</button>
     <button onclick={redirectToLogout}>Log Out</button> -->
+    <div class="logout">
+            <button onclick={redirectToLogout}> Logout </button>
+    </div>
+    <div class="goals-page">
+        <button onclick={redirectToGoals}> My Goals </button>
+    </div>
     <button class="toggle" onclick={toggleSidebar}>Pages</button>
         <div class="top-controls">
             <div class="tabs">
@@ -98,7 +104,6 @@
             </div>
         </div>
         <input type="text" placeholder="Search...">
-
         <div class="summary-cards">
             <div class="card">
                 <h3>Calories</h3>
@@ -277,5 +282,19 @@
         background-color: #121212;
         color: white;
     }
+    .logout {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
 
+        margin-left: 0.5rem;
+        padding: 1rem 0.5rem;
+
+        font-weight: bold;
+
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+    }
 </style>

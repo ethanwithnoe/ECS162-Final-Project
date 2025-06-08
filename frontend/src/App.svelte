@@ -4,6 +4,7 @@
   import Dashboard from './Dashboard.svelte';
   import Meals from './Meals.svelte';
   import Goals from './Goals.svelte';
+  import AddFood from './AddFood.svelte';
 
   let currentPath = window.location.pathname;
   let loggedIn = false;
