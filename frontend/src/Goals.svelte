@@ -8,6 +8,7 @@
     });
     //Doesn't show sidebar immediately
     let showSidebar = false;
+    let submitMsg = "";
     //Sets userstats to default values if no data there
     let userStats = {
         Age: 0,
@@ -77,7 +78,7 @@
             userStats.AMR = userStats.BMR * 1.9;
         }
 
-        //Calculates User Goals based on Calories
+        //Calculates User Goals based on Calories and rounds to nicer numbers
         userGoals.calories = Math.round(userStats.AMR);
         userGoals.protein = Math.round((0.10*userGoals.calories) / 4);
         userGoals.carbohydrates = Math.round((0.45*userGoals.calories) / 4);
@@ -92,6 +93,11 @@
         });
         const result = await res.json();
         console.log("Saved:", result);
+        //Updates submitMsg to update user for 5 seconds that goals were updated
+        submitMsg = "Goals Updated!";
+        setTimeout(() => {
+            submitMsg = "";
+        }, 5000);
     }
     //Fetches userinfo from the database. Loads it into their stats and displays it in the table
     async function fetchInfo() {
@@ -210,13 +216,32 @@
                     </tr>
                 </tbody>
             </table>
-            <!-- Submit Goals button that will submit Goals to database via backend call-->
-            <button on:click={submitGoals}>Submit</button>
+            <!--Ensures submit button doesnt move and is positioned side by side with update status-->
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <!-- Submit Goals button that will submit Goals to database via backend call-->
+                <button on:click={submitGoals}>Submit</button>
+                    <p class="success message" style="visibility: {submitMsg ? 'visible' : 'hidden'};">
+                        {submitMsg}
+                    </p>
+            </div>
         </main>
     </div>
 </div>
 
 <style>
+    /*Makes submitMsg green and bold*/
+    .success {
+        color: lightgreen;
+        font-weight: bold;
+    }
+    /*Allocates space to prevent submit button moving due to submitMsg appearing*/
+    .message {
+        min-width: 150px;
+        min-height: 1em;
+        margin: 0;
+        display: flex;
+        align-items: center;
+    }
     .container {
         font-family: system-ui, sans-serif;
         /* background-color: #121212; */
