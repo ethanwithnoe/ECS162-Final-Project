@@ -474,7 +474,7 @@ def addgoal():
     data["userid"] = session.get("user", {}).get("email", "INVALID")
     data["timestamp"] = datetime.now(timezone.utc).isoformat()
 
-    result = mongo.insertDocument(DB_FOOD, COL_GOALS, data)  
+    result = mongo.insertDocument(DB_USERS, COL_GOALS, data)  
     return jsonify({
         "userid": data.get("userid"),
         "timestamp": data.get("timestamp"),
