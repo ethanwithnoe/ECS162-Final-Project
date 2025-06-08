@@ -1,5 +1,5 @@
 <script lang="ts">
-    export let onFoodAdded: (data: any) => void;
+    //export let onFoodAdded: (data: any) => void;
     let manualMode = false;
     let searchQuery = "";
     let searchResults: any[] = [];

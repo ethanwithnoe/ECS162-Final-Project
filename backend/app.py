@@ -494,3 +494,33 @@ def addgoal():
         "carbohydrates": data.get("carbohydrates"),
         "inserted_id": str(result.inserted_id)
     }), 201
+
+#Gets goals from the database to bring user info to front end
+@app.route('/api/fetchgoals', methods=['GET'])
+def fetchgoals():
+    #Gets user object if valid
+    user_email = session.get("user", {}).get("email", "INVALID")
+    #Queries goals in database and finds the latest document 
+    doc = mongo.getCollection(DB_USERS, COL_GOALS). find_one(
+        {"userid": user_email}, sort=[("timestamp",-1)]
+    )
+    #If no goal found, returns error
+    if not doc:
+        return jsonify({"error": "no goals found"}), 404
+    #returns jsonify version of data within database to frontend
+    return jsonify({
+        "Age":              doc.get("Age"),
+        "Gender":           doc.get("Gender"), 
+        "HeightFt":         doc.get("HeightFt"),
+        "HeightIn":         doc.get("HeightIn"),
+        "HeightCM":         doc.get("HeightCM"),
+        "Weight":           doc.get("Weight"),
+        "WeightKG":         doc.get("WeightKG"),
+        "Activity":         doc.get("Activity"),
+        "BMR":              doc.get("BMR"),
+        "AMR":              doc.get("AMR"),
+        "calories":         doc.get("calories"),
+        "protein":          doc.get("protein"),
+        "fat":              doc.get("fat"),
+        "carbohydrates":    doc.get("carbohydrates"),
+    })

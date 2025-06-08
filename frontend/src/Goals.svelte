@@ -1,7 +1,14 @@
 <script>
 	// import Dashboard from './Dashboard.svelte';
     // import Meals from './Meals.svelte';
+    import { onMount } from 'svelte';
+    //Immediately calls fetchInfo to populate table with userinfo
+    onMount(() => {
+        fetchInfo();
+    });
+    //Doesn't show sidebar immediately
     let showSidebar = false;
+    //Sets userstats to default values if no data there
     let userStats = {
         Age: 0,
         Gender: "",
@@ -14,6 +21,7 @@
         BMR: 0,
         AMR: 0
     };
+    //Sets usergoals to 0 by default
     let userGoals = {
         calories: 0,
         protein: 0,
@@ -39,9 +47,12 @@
     function redirectToGoals() {
         window.location.href = "http://localhost:8000/goals";
     }
+    //Calculates users goals and pushes them to the table
     function calculateGoals() {
+        //Converts weight into kg and heigh into cm
         userStats.HeightCM = 2.54*((userStats.HeightFt * 12) + (userStats.HeightIn));
         userStats.WeightKG = userStats.Weight*0.45359237
+        //Calculates BMR per gender using different numbers
         if(userStats.Gender === "F" || userStats.Gender === "f") {
             userStats.BMR = (10 * userStats.WeightKG) + (6.25 * userStats.HeightCM) - (5 * userStats.Age) - 161;
         }
@@ -49,7 +60,7 @@
             userStats.BMR = 5 + (10 * userStats.WeightKG) + (6.25 * userStats.HeightCM) - (5 * userStats.Age);
 
         }
-
+        //Calculates AMR based on activity status using different multipliers
         if(userStats.Activity === "S" || userStats.Activity === "s") {
             userStats.AMR = userStats.BMR * 1.2;
         }
@@ -82,6 +93,35 @@
         const result = await res.json();
         console.log("Saved:", result);
     }
+    //Fetches userinfo from the database. Loads it into their stats and displays it in the table
+    async function fetchInfo() {
+        try {
+            const res = await fetch('api/fetchgoals');
+            //If fetch fails, print console error that no goals detected
+            if(!res.ok) {
+                console.error("No goals detected");
+                return;
+            }
+            //Catches data from fetchgoals
+            const data = await res.json();
+            //Stores users stats and goals from fetchgoals in backend
+            userGoals.calories =        data.calories;
+            userGoals.protein =         data.protein;
+            userGoals.fat =             data.fat;
+            userGoals.carbohydrates =   data.carbohydrates;
+
+            userStats.Age =             data.Age;
+            userStats.Gender =          data.Gender;
+            userStats.HeightFt =        data.HeightFt;
+            userStats.HeightIn =        data.HeightIn;
+            userStats.Weight =          data.Weight;
+            userStats.Activity =        data.Activity;
+            userStats.AMR =             data.AMR;
+            userStats.BMR =             data.BMR;
+        } catch (e) {               //Catches error
+            console.error("No user data", e);   //Prints that user has no data saved in mongo database
+        }
+    }
     const goals = [
         {type: "placeholder1", name: "goal"},
         {type: "placeholder2", name: "goal"},
@@ -90,6 +130,7 @@
 </script>
 
 <div class="container">
+    <!--Button to togglesidebar-->
     <button class="toggle" on:click={toggleSidebar}>Pages</button>
     
     <div class="layout">
@@ -104,19 +145,19 @@
         {/if}
 
         <main class="content">
-            <h1>My Goals</h1>
-            <div class="search-filter">
-                <input placeholder="Search..."/>
-                <button>Filter</button>
-                <button>Edit</button>
-            </div>
+            <h1>Goal Editor</h1>
+            <!--Calculator Table for users to input data if not already in database, and if there, user can update by binding values-->
             <h3> Calculate your Recommended Calorie Intake! </h3>
             <table>
                 <tbody>
                     <tr>
+                        <td><strong>Calorie Calculator!</strong></td>
+                    </tr>
+                    <tr>
                         <td>Age</td>
                         <td><input type="number" bind:value={userStats.Age} /></td>
                     </tr>
+                    <!--Input gender info that is case-insensitive using regex-->
                     <tr>
                         <td>Gender (M or F (M for Male, F for Female))</td>
                         <td><input type="text" bind:value={userStats.Gender} pattern="^(F|M|f|m)$" /></td>
@@ -133,6 +174,7 @@
                         <td>Weight (lbs)</td>
                         <td><input type="number" bind:value={userStats.Weight} /></td>
                     </tr>
+                    <!--Input Activity info that is case-insensitive using regex-->
                     <tr>
                         <td>Days of Exercise per Week (S: 0, L: 1-3 Days | M: 3-5 Days | A: 6-7 Days | E: 6-7 Days )</td>
                         <td><input type="text" bind:value={userStats.Activity} pattern="^(S|s|L|l|M|m|A|a|E|e)$" /></td>
@@ -142,11 +184,14 @@
 
             <button on:click={calculateGoals}>Calculate</button>
 
-            <h3> Here is your recommended Calorie Intake. For every pound a week you'd like to lose, subtract by 500! Update the values if you wish! </h3>
-            <h3> The statistics provided in the table below are the bare minimum multiplier based on your Calories from the USDA's Dietary Guidelines, for protein: 10-35%, carbohydrates: 45-65%, fat: 20-35%, </h3>
+            <h3> Here is your recommended Calorie Intake. For every pound a week you'd like to lose, subtract by 500! Update the values if you wish! The statistics provided in the table below are from the bare minimum multiplier based on your Calories from the USDA's Dietary Guidelines. The general goal of your calorie intake per each following nutrient is: protein: 10-35%, carbohydrates: 45-65%, fat: 20-35%. We suggest  </h3>
             <p>{userGoals.calories} Calories/day</p>
+            <!-- Table to place goals within. User can edit the values already in via bind value. If data already there, will load in user goals automatically on mount-->
             <table>
                 <tbody>
+                    <tr>
+                        <td><strong>Update your Goals Here!</strong></td>
+                    </tr>
                     <tr>
                         <td>Calorie Goal</td>
                         <td><input type="number" bind:value={userGoals.calories} /></td>
@@ -165,32 +210,8 @@
                     </tr>
                 </tbody>
             </table>
+            <!-- Submit Goals button that will submit Goals to database via backend call-->
             <button on:click={submitGoals}>Submit</button>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>Type</th>
-                        <th>Meal</th>
-                        <th>Calories</th>
-                        <th>Protein</th>
-                        <th>Fat</th>
-                        <th>Carbohydrates</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {#each goals as goal}
-                        <tr>
-                            <td>{goal.type}</td>
-                            <td>{goal.name}</td>
-                            <td><span class="value">Value</span></td>
-                            <td><span class="value">Value</span></td>
-                            <td><span class="value">Value</span></td>
-                            <td><span class="value">Value</span></td>
-                        </tr>
-                    {/each}
-                </tbody>
-            </table>
         </main>
     </div>
 </div>
@@ -248,32 +269,15 @@
         margin-bottom: 1rem;
     }
 
-    .search-filter {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 1rem;
-    }
-
-    .search-filter input {
-        flex: 1;
-        padding: 0.5rem;
-        background-color: #2a2a2a;
-    }
-
-    .search-filter button {
-        background-color: #2a2a2a;
-        color: white;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
-        cursor: pointer;
-    }
 
     table {
         width: 100%;
         border-collapse: collapse;
         background-color: #1e1e1e;
         border-radius: 8px;
+        padding: 10px;
+        margin-top: 10px;
+        margin-bottom: 10px;
     }
 
     th,td {
