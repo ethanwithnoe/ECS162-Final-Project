@@ -1,6 +1,96 @@
 <script lang="ts">
 	// import Dashboard from './Dashboard.svelte';
     import { onMount } from 'svelte';
+    import LineChart from '../components/LineChart.svelte';
+
+    // Mock data to test the graph
+    /* 
+        TODO - Sort the data here, send it to the graph component using props.
+    */
+       let foodData = [
+        {
+            "calories": 300,
+            "carbohydrates": 45,
+            "fat": 10,
+            "protein": 20,
+            "description": "Morning Oatmeal",
+            "name": "Oatmeal",
+            "timestamp": "2025-06-08T08:00:00.000000+00:00",
+            "userid": "admin@hw3.com",
+            "_id": "6844d54141d108c473d72fd9"
+        },
+        {
+            "calories": 450,
+            "carbohydrates": 60,
+            "fat": 15,
+            "protein": 25,
+            "description": "Chicken Salad",
+            "name": "Grilled Chicken Salad",
+            "timestamp": "2025-06-08T10:15:00.000000+00:00",
+            "userid": "admin@hw3.com",
+            "_id": "6844d54141d108c473d72fd9"
+        },
+        {
+            "calories": 150,
+            "carbohydrates": 20,
+            "fat": 5,
+            "protein": 10,
+            "description": "Apple and Peanut Butter",
+            "name": "Snack",
+            "timestamp": "2025-06-08T12:30:00.000000+00:00",
+            "userid": "admin@hw3.com",
+            "_id": "6844d54141d108c473d72fe1"
+        },
+        {
+            "calories": 600,
+            "carbohydrates": 75,
+            "fat": 20,
+            "protein": 40,
+            "description": "Dinner – Steak and Potatoes",
+            "name": "Steak Dinner",
+            "timestamp": "2025-06-08T17:00:00.000000+00:00",
+            "userid": "admin@hw3.com",
+            "_id": "6844d54141d108c473d72fe2"
+        },
+        {
+            "calories": 200,
+            "carbohydrates": 30,
+            "fat": 10,
+            "protein": 15,
+            "description": "Evening Smoothie",
+            "name": "Smoothie",
+            "timestamp": "2025-06-08T20:00:00.000000+00:00",
+            "userid": "admin@hw3.com",
+            "_id": "6844d54141d108c473d72fe3"
+        }
+    ];
+
+    type Meal = {
+        calories: number;
+        carbohydrates: number;
+        fat: number;
+        protein: number;
+        description: string;
+        name: string;
+        timestamp: string;
+        userid: string;
+        _id: string;
+    };
+
+    let selectedNutrient: keyof Meal = "calories";  // Define the default selected nutrient
+
+    let filteredData = foodData
+        .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()) // Sort by timestamp
+        .map(meal => ({
+            timestamp: meal.timestamp,
+            nutrientValue: meal[selectedNutrient as keyof Meal] as number,  // Assert nutrientValue is a number
+        }));
+    //END MOCK SECTION
+
+    let goalValue = 2000;
+    let buffer = 10;
+    //END MOCK SECTION
+
     let userEmail = null;
     let showSidebar = false;
 
@@ -183,8 +273,8 @@
                 </ul>
             </div>
             <div class="card large">
-                <h3>Today's Steps</h3>
-                <div class="graph-placeholder">[Line Graph]</div>
+                <h3>Today's Calories</h3>
+                <LineChart {filteredData} {goalValue} {buffer} height={200} width={600} selectedNutrient={selectedNutrient} />
             </div>
         </div>
 </div>
