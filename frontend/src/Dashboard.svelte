@@ -16,7 +16,7 @@
             "protein": 20,
             "description": "Morning Oatmeal",
             "name": "Oatmeal",
-            "timestamp": "2025-06-08T08:00:00.000000-08:00", // 8:00 AM > falls into the 8 AM bin
+            "timestamp": "2025-05-08T08:00:00.000000-08:00", // 8:00 AM > falls into the 8 AM bin
             "userid": "admin@hw3.com",
             "_id": "119"
         },
@@ -80,13 +80,19 @@
 
     let selectedNutrient: keyof Meal = "calories";  // Define the default selected nutrient
 
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     let filteredData = foodData
-        .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()) // Sort by timestamp
+        .filter(meal => {
+            const mealDate = new Date(meal.timestamp);
+            mealDate.setHours(0, 0, 0, 0);
+            return mealDate.getTime() === today.getTime();
+        })
+        .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
         .map(meal => ({
             timestamp: meal.timestamp,
-            nutrientValue: meal[selectedNutrient as keyof Meal] as number,  // Assert nutrientValue is a number
+            nutrientValue: meal[selectedNutrient as keyof Meal] as number,
         }));
-    //END MOCK SECTION
 
     let goalValue = 2000;
     let buffer = 10;
