@@ -215,6 +215,80 @@ def logout():
 
 # endregion Dex
 
+# Function to add sample food logs to a user
+# Does not do anything if user has *any* food logged already
+def addSampleFoods(userEmail: str):
+    foodData = [
+        {
+            "calories": 300,
+            "carbohydrates": 45,
+            "fat": 10,
+            "protein": 20,
+            "description": "Morning Oatmeal",
+            "name": "Oatmeal",
+            "timestamp": "2025-06-08T08:00:00.000000+00:00",
+            "userid": userEmail,
+            # "_id": "6844d54141d108c473d72fd9",
+        },
+        {
+            "calories": 450,
+            "carbohydrates": 60,
+            "fat": 15,
+            "protein": 25,
+            "description": "Chicken Salad",
+            "name": "Grilled Chicken Salad",
+            "timestamp": "2025-06-08T10:15:00.000000+00:00",
+            "userid": userEmail,
+            # "_id": "6844d54141d108c473d72fd9",
+        },
+        {
+            "calories": 150,
+            "carbohydrates": 20,
+            "fat": 5,
+            "protein": 10,
+            "description": "Apple and Peanut Butter",
+            "name": "Snack",
+            "timestamp": "2025-06-08T12:30:00.000000+00:00",
+            "userid": userEmail,
+            # "_id": "6844d54141d108c473d72fe1",
+        },
+        {
+            "calories": 600,
+            "carbohydrates": 75,
+            "fat": 20,
+            "protein": 40,
+            "description": "Dinner – Steak and Potatoes",
+            "name": "Steak Dinner",
+            "timestamp": "2025-06-08T17:00:00.000000+00:00",
+            "userid": userEmail,
+            # "_id": "6844d54141d108c473d72fe2",
+        },
+        {
+            "calories": 200,
+            "carbohydrates": 30,
+            "fat": 10,
+            "protein": 15,
+            "description": "Evening Smoothie",
+            "name": "Smoothie",
+            "timestamp": "2025-06-08T20:00:00.000000+00:00",
+            "userid": userEmail,
+            # "_id": "6844d54141d108c473d72fe3",
+        },
+    ]
+    find = mongo.findDocument(
+        DB_FOOD,
+        COL_FOOD,
+        {"userid": userEmail},
+    )
+    if not find:
+        for food in foodData:
+            mongo.insertDocument(
+                DB_FOOD,
+                COL_FOOD,
+                food,
+            )
+
+addSampleFoods("moderator@hw3.com")
 
 # I have no idea why the dev version requires every fetch/route to start with "/api".
 # The production version seemed to work fine without it.
