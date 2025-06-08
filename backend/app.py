@@ -115,8 +115,10 @@ mongo = MongoWrapper(os.getenv("MONGO_URI"))
 # Database and collection names
 DB_FOOD = "fooddb"
 COL_FOOD = "food"
+
 DB_USERS = "usersdb"
 COL_USERS = "users"
+COL_GOALS = "goals"
 
 
 # Function to add Dex accounts to Database
@@ -458,6 +460,34 @@ def addfood():
         "timestamp": data.get("timestamp"),
         "brand": data.get("brand"),
         "name": data.get("name"),
+        "calories": data.get("calories"),
+        "protein": data.get("protein"),
+        "fat": data.get("fat"),
+        "carbohydrates": data.get("carbohydrates"),
+        "inserted_id": str(result.inserted_id)
+    }), 201
+
+
+@app.route('/api/addgoals', methods=['POST'])
+def addgoal():
+    data = request.json
+    data["userid"] = session.get("user", {}).get("email", "INVALID")
+    data["timestamp"] = datetime.now(timezone.utc).isoformat()
+
+    result = mongo.insertDocument(DB_FOOD, COL_GOALS, data)  
+    return jsonify({
+        "userid": data.get("userid"),
+        "timestamp": data.get("timestamp"),
+        "Age": data.get("Age"),
+        "Gender": data.get("Gender"), 
+        "HeightFt": data.get("HeightFt"),
+        "HeightIn": data.get("HeightIn"),
+        "HeightCM": data.get("HeightCM"),
+        "Weight": data.get("Weight"),
+        "WeightKG": data.get("WeightKG"),
+        "Activity": data.get("Activity"),
+        "BMR": data.get("BMR"),
+        "AMR": data.get("AMR"),
         "calories": data.get("calories"),
         "protein": data.get("protein"),
         "fat": data.get("fat"),

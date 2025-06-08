@@ -72,8 +72,15 @@
         userGoals.carbohydrates = Math.round((0.45*userGoals.calories) / 4);
         userGoals.fat = Math.round((0.20*userGoals.calories) / 9);
     }
-    function submitGoals() {
-        console.log("yippee");
+    
+    async function submitGoals() {
+        const res = await fetch("/api/addgoals", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...userStats,  ...userGoals})
+        });
+        const result = await res.json();
+        console.log("Saved:", result);
     }
     const goals = [
         {type: "placeholder1", name: "goal"},
