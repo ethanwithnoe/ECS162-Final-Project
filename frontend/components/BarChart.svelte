@@ -19,9 +19,10 @@
     // Props
     export let nutrient: 'calories' | 'protein' | 'fat' | 'carbohydrates';
     export let goal: number;
-    export let buffer: number;
+    export let buffer: number; //So the goal isn't the top, configurable by frontend call, idea is roughly 10%
 
     export let foodLogs: {
+        
         timestamp: string;
         calories: number;
         protein: number;
@@ -89,7 +90,7 @@
 
             calories: '#067FD0',        // Navy Blue
             protein: '#128FC8',         // Pacific Blue
-            fat: '#797EF6',                     // "Cornflower blue?
+            fat: '#797EF6',                     // "Cornflower blue"?
             carbohydrates: '#1E80C1'    // "Pelorous"
 
         };
