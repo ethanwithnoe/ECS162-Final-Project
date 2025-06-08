@@ -1,9 +1,17 @@
 <script lang="ts">
 	// import Dashboard from './Dashboard.svelte';
     import { onMount } from 'svelte';
+    onMount(() => {
+        fetchInfo();
+    });
     let userEmail = null;
     let showSidebar = false;
-
+    let userGoals = {
+        calories: 0,
+        protein: 0,
+        fat: 0,
+        carbohydrates: 0
+    }
     function toggleSidebar() {
         showSidebar = !showSidebar;
     }
@@ -82,6 +90,25 @@
             FLelem.appendChild(newEntry);
         }
     }
+    async function fetchInfo() {
+        try {
+            const res = await fetch('api/fetchgoals');
+            //If fetch fails, print console error that no goals detected
+            if(!res.ok) {
+                console.error("No goals detected");
+                return;
+            }
+            //Catches data from fetchgoals
+            const data = await res.json();
+            //Stores users stats and goals from fetchgoals in backend
+            userGoals.calories =        data.calories;
+            userGoals.protein =         data.protein;
+            userGoals.fat =             data.fat;
+            userGoals.carbohydrates =   data.carbohydrates;
+        } catch (e) {               //Catches error
+            console.error("No user data", e);   //Prints that user has no data saved in mongo database
+        }
+    }
 </script>
 
 <div class="dashboard-container">
@@ -108,19 +135,25 @@
             <div class="card">
                 <h3>Calories</h3>
                 <p>placeholder</p>
-                <small>goal placeholder</small>
+                <small>Calorie Goal: {userGoals.calories}</small>
             </div>
 
             <div class="card">
                 <h3>Protein</h3>
                 <p>placeholder</p>
-                <small>goal placeholder</small>
+                <small>Protein Goal: {userGoals.protein}</small>
             </div>
 
             <div class="card">
-                <h3>Steps</h3>
+                <h3>Carbohydrates</h3>
                 <p>placeholder</p>
-                <small>goal placeholder</small>
+                <small>Carbohydrate Goal: {userGoals.carbohydrates}</small>
+            </div>
+
+            <div class="card">
+                <h3>Fat</h3>
+                <p>placeholder</p>
+                <small>Fat Goal: {userGoals.fat}</small>
             </div>
         </div>
 
