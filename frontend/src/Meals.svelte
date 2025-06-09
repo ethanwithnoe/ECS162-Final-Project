@@ -1,8 +1,29 @@
 <script lang="ts">
 	// import Dashboard from './Dashboard.svelte';
+    import { onMount } from 'svelte';
     import  AddFood  from "./AddFood.svelte";
     let showSidebar = false;
     let showAddFood = false;
+    let meals = [];
+    let error = "";
+
+    async function loadMeals() {
+        try {
+            const res = await fetch("/api/getuserfoods", {credentials: "include"});
+            const data = await res.json();
+            if(data.result === 0) {
+                meals = data.foodList;
+            } else {
+                error = "Please Login to View Your Meals."
+            }
+        } catch (err) {
+            error = "Error loading meals."
+            console.log(error);
+        }
+    }
+    onMount(() => {
+        loadMeals();
+    })
     function toggleSidebar() {
         showSidebar = !showSidebar;
     }
@@ -30,11 +51,11 @@
     async function toggleAddFood() {
         showAddFood = !showAddFood;
     }
-    const meals = [
-        {type: "placeholder1", name: "Meal"},
-        {type: "placeholder2", name: "Meal"},
-        {type: "placeholder3", name: "Meal"},
-    ];
+    // const meals = [
+    //     {type: "placeholder1", name: "Meal"},
+    //     {type: "placeholder2", name: "Meal"},
+    //     {type: "placeholder3", name: "Meal"},
+    // ];
 </script>
 
 <div class="container">
@@ -60,28 +81,28 @@
                 <button onclick={toggleAddFood}> + </button>
             </div>
             {#if showAddFood}
-                <div class="addfood-table">                    
+                <div class="addfood-table">
                     <AddFood onFoodAdded={handleFoodAdded} />
                 </div>
             {/if}
             <table>
                 <thead>
                     <tr>
-                        <th>Type</th>
                         <th>Meal</th>
                         <th>Calories</th>
                         <th>Protein</th>
                         <th>Fat</th>
+                        <th>Carbohydrates</th>
                     </tr>
                 </thead>
                 <tbody>
                     {#each meals as meal}
                         <tr>
-                            <td>{meal.type}</td>
                             <td>{meal.name}</td>
-                            <td><span class="value">Value</span></td>
-                            <td><span class="value">Value</span></td>
-                            <td><span class="value">Value</span></td>
+                            <td><span class="value">{meal.calories}</span></td>
+                            <td><span class="value">{meal.protein}</span></td>
+                            <td><span class="value">{meal.fat}</span></td>
+                            <td><span class="value">{meal.carbohydrates}</span></td>
                         </tr>
                     {/each}
                 </tbody>

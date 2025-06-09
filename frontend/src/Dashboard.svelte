@@ -263,6 +263,7 @@
         <div class="summary-cards">
             <div class="card">
                 <h3>Calories</h3>
+                <p>placeholder</p>
                 {#if filteredProgress}
                     <ProgressChart
                         filteredData={filteredProgress}

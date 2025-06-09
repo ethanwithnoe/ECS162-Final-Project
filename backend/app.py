@@ -176,7 +176,7 @@ addDexUsers()
 
 @app.route("/login")
 def login():
-    # debug_out("login")
+    debug_out("login")
     session["nonce"] = nonce
     redirect_uri = "http://localhost:8000/authorize"
     return oauth.flask_app.authorize_redirect(redirect_uri, nonce=nonce)
@@ -1029,33 +1029,33 @@ def getUserFoods():
     if not user:
         return jsonify({"result": 10})
 
-    # define time range
-    latest = None
-    earliest = None
+    # # define time range
+    # latest = None
+    # earliest = None
 
-    timeRange = request.args.get("range")
-    if timeRange == "custom":
-        arg_earliest = request.args.get("earliest")
-        arg_latest = request.args.get("latest")
+    # timeRange = request.args.get("range")
+    # if timeRange == "custom":
+    #     arg_earliest = request.args.get("earliest")
+    #     arg_latest = request.args.get("latest")
 
-        if arg_earliest:
-            earliest = datetime.fromisoformat(arg_earliest)
-            earliest = earliest.replace(tzinfo=timezone.utc)
-        if arg_latest:
-            latest = datetime.fromisoformat(arg_latest)
-            latest = latest.replace(tzinfo=timezone.utc)
+    #     if arg_earliest:
+    #         earliest = datetime.fromisoformat(arg_earliest)
+    #         earliest = earliest.replace(tzinfo=timezone.utc)
+    #     if arg_latest:
+    #         latest = datetime.fromisoformat(arg_latest)
+    #         latest = latest.replace(tzinfo=timezone.utc)
 
-    elif timeRange == "today":
-        latest = datetime.now(timezone.utc)  # now
-        earliest = latest - timedelta(days=1)
-    elif timeRange == "week":
-        latest = datetime.now(timezone.utc)  # now
-        earliest = latest - timedelta(days=7)
-    elif timeRange == "month":
-        latest = datetime.now(timezone.utc)  # now
-        earliest = latest - timedelta(days=30)
-    else:
-        pass
+    # elif timeRange == "today":
+    #     latest = datetime.now(timezone.utc)  # now
+    #     earliest = latest - timedelta(days=1)
+    # elif timeRange == "week":
+    #     latest = datetime.now(timezone.utc)  # now
+    #     earliest = latest - timedelta(days=7)
+    # elif timeRange == "month":
+    #     latest = datetime.now(timezone.utc)  # now
+    #     earliest = latest - timedelta(days=30)
+    # else:
+    #     pass
 
     # get all foods logged by the user
     docs = mongo.searchDocument(DB_FOOD, COL_FOOD, {"userid": user["email"]})
@@ -1064,12 +1064,12 @@ def getUserFoods():
 
     # search through foods
     for doc in docs:
-        # check if within the specified timeframe
-        timestamp = datetime.fromisoformat(doc["timestamp"])
-        # return {"e":earliest,"t":timestamp}
-        if (earliest is None or timestamp > earliest) and (
-            latest is None or timestamp < latest
-        ):
+        # # check if within the specified timeframe
+        # timestamp = datetime.fromisoformat(doc["timestamp"])
+        # # return {"e":earliest,"t":timestamp}
+        # if (earliest is None or timestamp > earliest) and (
+        #     latest is None or timestamp < latest
+        # ):
             jsonDoc = doc.copy()
             # convert ObjectID to string
             jsonDoc["_id"] = str(jsonDoc["_id"])
