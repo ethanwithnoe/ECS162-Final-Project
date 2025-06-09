@@ -48,6 +48,22 @@
     function redirectToGoals() {
         window.location.href = "http://localhost:8000/goals";
     }
+    
+    async function submitGoals() {
+        const res = await fetch("/api/addgoals", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...userStats,  ...userGoals})
+        });
+        const result = await res.json();
+        console.log("Saved:", result);
+        //Updates submitMsg to update user for 5 seconds that goals were updated
+        submitMsg = "Goals Updated!";
+        setTimeout(() => {
+            submitMsg = "";
+        }, 5000);
+    }
+
     //Calculates users goals and pushes them to the table
     function calculateGoals() {
         //Converts weight into kg and heigh into cm
@@ -57,10 +73,11 @@
         if(userStats.Gender === "F" || userStats.Gender === "f") {
             userStats.BMR = (10 * userStats.WeightKG) + (6.25 * userStats.HeightCM) - (5 * userStats.Age) - 161;
         }
-        if(userStats.Gender === "M" || userStats.Gender === "m") {
+        else if(userStats.Gender === "M" || userStats.Gender === "m") {
             userStats.BMR = 5 + (10 * userStats.WeightKG) + (6.25 * userStats.HeightCM) - (5 * userStats.Age);
 
         }
+
         //Calculates AMR based on activity status using different multipliers
         if(userStats.Activity === "S" || userStats.Activity === "s") {
             userStats.AMR = userStats.BMR * 1.2;
@@ -80,25 +97,15 @@
 
         //Calculates User Goals based on Calories and rounds to nicer numbers
         userGoals.calories = Math.round(userStats.AMR);
+        console.log(userGoals.calories);
         userGoals.protein = Math.round((0.10*userGoals.calories) / 4);
         userGoals.carbohydrates = Math.round((0.45*userGoals.calories) / 4);
         userGoals.fat = Math.round((0.20*userGoals.calories) / 9);
+
+        submitGoals();
     }
     
-    async function submitGoals() {
-        const res = await fetch("/api/addgoals", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...userStats,  ...userGoals})
-        });
-        const result = await res.json();
-        console.log("Saved:", result);
-        //Updates submitMsg to update user for 5 seconds that goals were updated
-        submitMsg = "Goals Updated!";
-        setTimeout(() => {
-            submitMsg = "";
-        }, 5000);
-    }
+    
     //Fetches userinfo from the database. Loads it into their stats and displays it in the table
     async function fetchInfo() {
         try {
@@ -190,9 +197,9 @@
             </table>
 
             <button onclick={calculateGoals}>Calculate</button>
-
-            <h3> Here is your recommended Calorie Intake. For every pound a week you'd like to lose, subtract by 500! Update the values if you wish! The statistics provided in the table below are from the bare minimum multiplier based on your Calories from the USDA's Dietary Guidelines. The general goal of your calorie intake per each following nutrient is: protein: 10-35%, carbohydrates: 45-65%, fat: 20-35%. We suggest  </h3>
-            <p>{userGoals.calories} Calories/day</p>
+            
+            <h3> Here is your recommended Calorie Intake. For every pound a week you'd like to lose, subtract by 500! Update the values if you wish! The statistics provided in the table below are from the bare minimum multiplier based on your Calories from the USDA's Dietary Guidelines. The general goal of your calorie intake per each following nutrient is: protein: 10-35%, carbohydrates: 45-65%, fat: 20-35%. We suggest {userGoals.calories} Calories/day </h3>
+            <!-- <p>{userGoals.calories} Calories/day</p> -->
             <!-- Table to place goals within. User can edit the values already in via bind value. If data already there, will load in user goals automatically on mount-->
             <table>
                 <tbody>
