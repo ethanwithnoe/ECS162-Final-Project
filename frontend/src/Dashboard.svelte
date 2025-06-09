@@ -3,6 +3,7 @@
     import { onMount } from 'svelte';
     import LineChart from '../components/LineChart.svelte';
     import BarChart from '../components/BarChart.svelte';
+    import ProgressChart from '../components/RadialProgress.svelte';
 
     // Mock data to test the graph
     /* 
@@ -66,6 +67,282 @@
         }
     ];
 
+    // MOCK DATA FOR THE PROGRESS CHART
+
+    let progressData = [
+        {
+            "_id": { "$oid": "6845294727d84e4d2024ddc1" },
+            "calories": true,
+            "protein": true,
+            "fat": true,
+            "carbohydrates": true,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-05-10"
+        },
+        {
+            "_id": { "$oid": "6845294727d84e4d2024ddc2" },
+            "calories": true,
+            "protein": true,
+            "fat": true,
+            "carbohydrates": true,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-05-11"
+        },
+        {
+            "_id": { "$oid": "6845294727d84e4d2024ddc3" },
+            "calories": true,
+            "protein": false,
+            "fat": true,
+            "carbohydrates": true,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-05-12"
+        },
+        {
+            "_id": { "$oid": "6845294727d84e4d2024ddc4" },
+            "calories": true,
+            "protein": true,
+            "fat": true,
+            "carbohydrates": true,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-05-13"
+        },
+        {
+            "_id": { "$oid": "6845294727d84e4d2024ddc5" },
+            "calories": true,
+            "protein": true,
+            "fat": false,
+            "carbohydrates": true,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-05-14"
+        },
+        {
+            "_id": { "$oid": "6845294727d84e4d2024ddc6" },
+            "calories": true,
+            "protein": true,
+            "fat": true,
+            "carbohydrates": true,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-05-15"
+        },
+        {
+            "_id": { "$oid": "6845294727d84e4d2024ddc7" },
+            "calories": false,
+            "protein": true,
+            "fat": true,
+            "carbohydrates": true,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-05-16"
+        },
+        {
+            "_id": { "$oid": "6845294727d84e4d2024ddc8" },
+            "calories": true,
+            "protein": true,
+            "fat": true,
+            "carbohydrates": true,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-05-17"
+        },
+        {
+            "_id": { "$oid": "6845294727d84e4d2024ddc9" },
+            "calories": true,
+            "protein": true,
+            "fat": false,
+            "carbohydrates": true,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-05-18"
+        },
+        {
+            "_id": { "$oid": "6845294727d84e4d2024ddca" },
+            "calories": true,
+            "protein": true,
+            "fat": true,
+            "carbohydrates": false,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-05-19"
+        },
+        {
+            "_id": { "$oid": "6845294727d84e4d2024ddcb" },
+            "calories": true,
+            "protein": true,
+            "fat": true,
+            "carbohydrates": true,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-05-20"
+        },
+        {
+            "_id": { "$oid": "6845294727d84e4d2024ddcc" },
+            "calories": true,
+            "protein": true,
+            "fat": true,
+            "carbohydrates": true,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-05-21"
+        },
+        {
+            "_id": { "$oid": "6845294727d84e4d2024ddcd" },
+            "calories": false,
+            "protein": true,
+            "fat": true,
+            "carbohydrates": true,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-05-22"
+        },
+        {
+            "_id": { "$oid": "6845294727d84e4d2024ddce" },
+            "calories": true,
+            "protein": true,
+            "fat": true,
+            "carbohydrates": true,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-05-23"
+        },
+        {
+            "_id": { "$oid": "6845294727d84e4d2024ddcf" },
+            "calories": true,
+            "protein": false,
+            "fat": true,
+            "carbohydrates": true,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-05-24"
+        },
+        {
+            "_id": { "$oid": "6845294727d84e4d2024ddd0" },
+            "calories": true,
+            "protein": true,
+            "fat": true,
+            "carbohydrates": false,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-05-25"
+        },
+        {
+            "_id": { "$oid": "6845294727d84e4d2024ddd1" },
+            "calories": true,
+            "protein": true,
+            "fat": false,
+            "carbohydrates": true,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-05-26"
+        },
+        {
+            "_id": { "$oid": "6845294727d84e4d2024ddd2" },
+            "calories": true,
+            "protein": true,
+            "fat": true,
+            "carbohydrates": true,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-05-27"
+        },
+        {
+            "_id": { "$oid": "6845294727d84e4d2024ddd3" },
+            "calories": true,
+            "protein": true,
+            "fat": true,
+            "carbohydrates": true,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-05-28"
+        },
+        {
+            "_id": { "$oid": "6845294727d84e4d2024ddd4" },
+            "calories": true,
+            "protein": true,
+            "fat": true,
+            "carbohydrates": true,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-05-29"
+        },
+        {
+            "_id": { "$oid": "6845294727d84e4d2024ddd5" },
+            "calories": false,
+            "protein": false,
+            "fat": true,
+            "carbohydrates": true,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-05-30"
+        },
+        {
+            "_id": { "$oid": "6845294727d84e4d2024ddd6" },
+            "calories": true,
+            "protein": true,
+            "fat": true,
+            "carbohydrates": true,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-05-31"
+        },
+        {
+            "_id": { "$oid": "6845294727d84e4d2024ddd7" },
+            "calories": true,
+            "protein": true,
+            "fat": false,
+            "carbohydrates": true,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-06-01"
+        },
+        {
+            "_id": { "$oid": "6845294727d84e4d2024ddd8" },
+            "calories": true,
+            "protein": true,
+            "fat": true,
+            "carbohydrates": false,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-06-02"
+        },
+        {
+            "_id": { "$oid": "6845294727d84e4d2024ddd9" },
+            "calories": true,
+            "protein": true,
+            "fat": true,
+            "carbohydrates": true,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-06-03"
+        },
+        {
+            "_id": { "$oid": "6845294727d84e4d2024ddda" },
+            "calories": true,
+            "protein": true,
+            "fat": true,
+            "carbohydrates": true,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-06-04"
+        },
+        {
+            "_id": { "$oid": "6845294727d84e4d2024dddb" },
+            "calories": true,
+            "protein": false,
+            "fat": true,
+            "carbohydrates": true,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-06-05"
+        },
+        {
+            "_id": { "$oid": "6845294727d84e4d2024dddc" },
+            "calories": true,
+            "protein": true,
+            "fat": true,
+            "carbohydrates": true,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-06-06"
+        },
+        {
+            "_id": { "$oid": "6845294727d84e4d2024dddd" },
+            "calories": true,
+            "protein": true,
+            "fat": false,
+            "carbohydrates": true,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-06-07"
+        },
+        {
+            "_id": { "$oid": "6845294727d84e4d2024dee4" },
+            "calories": true,
+            "protein": true,
+            "fat": false,
+            "carbohydrates": true,
+            "userid": "user@hw3.com",
+            "timestamp": "2025-06-08"
+        }
+    ]
+    
+
     type Meal = {
         calories: number;
         carbohydrates: number;
@@ -96,7 +373,44 @@
 
     let goalValue = 2000;
     let buffer = 10;
-    //END MOCK SECTION
+    //END MOCK SECTION FOR LINE/BAR
+
+    // MOCK SECTION FOR PROGRESS FILTERING
+    let view: "today" | "lastWeek" | "lastMonth" = "today";
+
+    function filterProgressData(view: string) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // normalize to start of day
+
+        if (view === "lastWeek") {
+            // last 7 days including today
+            const sevenDaysAgo = new Date(today);
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6); // 6 because inclusive of today
+
+            return progressData.filter(item => {
+                const itemDate = new Date(item.timestamp);
+                return itemDate >= sevenDaysAgo && itemDate <= today;
+            });
+        } else if (view === "lastMonth") {
+            // previous calendar month
+            const firstDayThisMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+            const lastMonthEnd = new Date(firstDayThisMonth);
+            lastMonthEnd.setDate(0); // last day of previous month
+            const lastMonthStart = new Date(lastMonthEnd.getFullYear(), lastMonthEnd.getMonth(), 1);
+
+            return progressData.filter(item => {
+                const itemDate = new Date(item.timestamp);
+                return itemDate >= lastMonthStart && itemDate <= lastMonthEnd;
+            });
+        } else {
+            // Default to show all data or today
+            return progressData;
+        }
+    }
+
+    $: filteredProgress = filterProgressData(view);
+
+    // END MOCK SECTION FOR PROGRESS FILTERING
 
     let userEmail = null;
     let showSidebar = false;
@@ -199,7 +513,12 @@
         <div class="summary-cards">
             <div class="card">
                 <h3>Calories</h3>
-                <p>placeholder</p>
+                <ProgressChart
+                    filteredData={filteredProgress}
+                    {selectedNutrient}
+                    width={300}
+                    height={300}
+                />
                 <small>goal placeholder</small>
             </div>
 

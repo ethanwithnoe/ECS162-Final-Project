@@ -41,7 +41,7 @@
     export let buffer: number = 10;                         // 10% buffer above the goal
     export let height: number = 300;                        // Graph height
     export let width: number = 600;                         // Graph width
-    export let selectedNutrient: string = 'calories';       // Nutrient to display (calories, protein, etc.)
+    export let selectedNutrient: 'calories' | 'protein' | 'fat' | 'carbohydrates' = 'calories';       // Nutrient to display (calories, protein, etc.)
 
     let svg: SVGSVGElement;
 

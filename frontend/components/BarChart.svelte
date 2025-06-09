@@ -47,7 +47,7 @@
     export let buffer: number = 10;
     export let height: number = 300;
     export let width: number = 600;
-    export let selectedNutrient: string = 'calories';
+    export let selectedNutrient: 'calories' | 'protein' | 'fat' | 'carbohydrates' = 'calories';
     export let startHour: number = 6;
     export let endHour: number = 24;
 
