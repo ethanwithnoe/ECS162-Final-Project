@@ -1,8 +1,8 @@
-<script>
+<script lang="ts">
 	// import Dashboard from './Dashboard.svelte';
-
+    import  AddFood  from "./AddFood.svelte";
     let showSidebar = false;
-
+    let showAddFood = false;
     function toggleSidebar() {
         showSidebar = !showSidebar;
     }
@@ -22,7 +22,14 @@
     function redirectToGoals() {
         window.location.href = "http://localhost:8000/goals";
     }
-
+    let currentRoute = window.location.pathname;
+    async function handleFoodAdded(foodData: any) {
+        console.log("Food added:", foodData);
+        showAddFood = false;
+    }
+    async function toggleAddFood() {
+        showAddFood = !showAddFood;
+    }
     const meals = [
         {type: "placeholder1", name: "Meal"},
         {type: "placeholder2", name: "Meal"},
@@ -50,8 +57,13 @@
             <div class="search-filter">
                 <input placeholder="Search..."/>
                 <button>Filter</button>
+                <button onclick={toggleAddFood}> + </button>
             </div>
-
+            {#if showAddFood}
+                <div class="addfood-table">                    
+                    <AddFood onFoodAdded={handleFoodAdded} />
+                </div>
+            {/if}
             <table>
                 <thead>
                     <tr>
