@@ -227,7 +227,7 @@
                     width={600}
                     selectedNutrient={selectedNutrient}
                     startHour={6}
-                    endHour={24}
+                    endHour={23}
                 />
             </div>
 

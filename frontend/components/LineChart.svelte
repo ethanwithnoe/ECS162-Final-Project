@@ -216,18 +216,4 @@
         color: black;
         background-color: white;
     }
-
-    .domain,
-    .tick line {
-        stroke: #ddd; /* Lighter for grid line feel */
-    }
-
-    .tick text {
-        fill: #555;
-    }
-
-    .line {
-        stroke: #07c;  /* Light blue color for the line */
-        stroke-width: 2;
-    }
 </style>

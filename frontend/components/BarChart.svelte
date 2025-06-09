@@ -131,8 +131,8 @@
         .attr('width', xScale.bandwidth())
         .attr('height', d => innerHeight - yScale(d.cumulative))
         .attr('fill', 'black')
-        .attr('rx', 6) // rounds all corners
-        .attr('ry', 6);
+        .attr('rx', 3) // rounds all corners
+        .attr('ry', 3);
 
         // OVERLAY rectangles at bottom to mask rounded corners, *STYLE!*
         // ONLY for bars where cumulative > 0 to avoid overlay on empty bars
@@ -182,20 +182,5 @@
         font-family: 'Inter', system-ui, sans-serif;
         color: black;
         background-color: white;
-    }
-    .domain,
-    .tick line {
-        stroke: #ddd;
-    }
-    .tick text {
-        fill: #555;
-    }
-    .bar {
-        fill: black;
-        rx: 6;
-        ry: 6;
-    }
-    .bar-overlay {
-        fill: black;
     }
 </style>
