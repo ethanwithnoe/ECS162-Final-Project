@@ -5,10 +5,6 @@
     import BarChart from '../components/BarChart.svelte';
     import ProgressChart from '../components/RadialProgress.svelte';
 
-    
-
-    
-
     type Meal = {
         calories: number;
         carbohydrates: number;
@@ -74,7 +70,9 @@
                 return;
             }
             const data = await res.json();
-            progressData = data;
+            console.log(data);
+            progressData = data.records;
+            // console.log(progressData);
         } catch (error) {
             console.error("Failed to fetch Progress Data: ", error);
             return;
@@ -153,7 +151,7 @@
         setFriendsList();
         getFoodLogs();
         fetchInfo();
-        filteredProgress = filterProgressData(view);
+        filteredProgress = await filterProgressData(view);
     });
 
     async function fetchFriendsList() {
