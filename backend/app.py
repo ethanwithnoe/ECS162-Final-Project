@@ -235,9 +235,9 @@ def addSampleFoods(userEmail: str):
             "protein": 20,
             "description": "Morning Oatmeal",
             "name": "Oatmeal",
-            "timestamp": "2025-06-08T08:00:00.000000+00:00",
+            "timestamp": "2025-05-08T08:00:00.000000-08:00",  # 8:00 AM > falls into the 8 AM bin
             "userid": userEmail,
-            # "_id": "6844d54141d108c473d72fd9",
+            # "_id": "119"
         },
         {
             "calories": 450,
@@ -246,9 +246,9 @@ def addSampleFoods(userEmail: str):
             "protein": 25,
             "description": "Chicken Salad",
             "name": "Grilled Chicken Salad",
-            "timestamp": "2025-06-08T10:15:00.000000+00:00",
+            "timestamp": "2025-06-08T10:15:00.000000-08:00",
             "userid": userEmail,
-            # "_id": "6844d54141d108c473d72fd9",
+            # "_id": "11"
         },
         {
             "calories": 150,
@@ -257,20 +257,20 @@ def addSampleFoods(userEmail: str):
             "protein": 10,
             "description": "Apple and Peanut Butter",
             "name": "Snack",
-            "timestamp": "2025-06-08T12:30:00.000000+00:00",
+            "timestamp": "2025-06-08T12:30:00.000000-08:00",
             "userid": userEmail,
-            # "_id": "6844d54141d108c473d72fe1",
+            # "_id": "11"
         },
         {
             "calories": 600,
             "carbohydrates": 75,
             "fat": 20,
             "protein": 40,
-            "description": "Dinner – Steak and Potatoes",
+            "description": "Dinner - Steak and Potatoes",
             "name": "Steak Dinner",
-            "timestamp": "2025-06-08T17:00:00.000000+00:00",
+            "timestamp": "2025-06-08T17:00:00.000000-08:00",
             "userid": userEmail,
-            # "_id": "6844d54141d108c473d72fe2",
+            # "_id": "11"
         },
         {
             "calories": 200,
@@ -279,9 +279,9 @@ def addSampleFoods(userEmail: str):
             "protein": 15,
             "description": "Evening Smoothie",
             "name": "Smoothie",
-            "timestamp": "2025-06-08T20:00:00.000000+00:00",
+            "timestamp": "2025-06-08T20:00:00.000000-08:00",
             "userid": userEmail,
-            # "_id": "6844d54141d108c473d72fe3",
+            # "_id": "11"
         },
     ]
     find = mongo.findDocument(
@@ -297,8 +297,297 @@ def addSampleFoods(userEmail: str):
                 food,
             )
 
+# Function to add sample record data to a user
+# Does not do anything if user has *any* recordgoal data already
+def addSampleRecords(userEmail: str):
+    recordData = [
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024ddc1"},
+            "calories": True,
+            "protein": True,
+            "fat": True,
+            "carbohydrates": True,
+            "userid": userEmail,
+            "timestamp": "2025-05-10",
+        },
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024ddc2"},
+            "calories": True,
+            "protein": True,
+            "fat": True,
+            "carbohydrates": True,
+            "userid": userEmail,
+            "timestamp": "2025-05-11",
+        },
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024ddc3"},
+            "calories": True,
+            "protein": False,
+            "fat": True,
+            "carbohydrates": True,
+            "userid": userEmail,
+            "timestamp": "2025-05-12",
+        },
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024ddc4"},
+            "calories": True,
+            "protein": True,
+            "fat": True,
+            "carbohydrates": True,
+            "userid": userEmail,
+            "timestamp": "2025-05-13",
+        },
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024ddc5"},
+            "calories": True,
+            "protein": True,
+            "fat": False,
+            "carbohydrates": True,
+            "userid": userEmail,
+            "timestamp": "2025-05-14",
+        },
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024ddc6"},
+            "calories": True,
+            "protein": True,
+            "fat": True,
+            "carbohydrates": True,
+            "userid": userEmail,
+            "timestamp": "2025-05-15",
+        },
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024ddc7"},
+            "calories": False,
+            "protein": True,
+            "fat": True,
+            "carbohydrates": True,
+            "userid": userEmail,
+            "timestamp": "2025-05-16",
+        },
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024ddc8"},
+            "calories": True,
+            "protein": True,
+            "fat": True,
+            "carbohydrates": True,
+            "userid": userEmail,
+            "timestamp": "2025-05-17",
+        },
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024ddc9"},
+            "calories": True,
+            "protein": True,
+            "fat": False,
+            "carbohydrates": True,
+            "userid": userEmail,
+            "timestamp": "2025-05-18",
+        },
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024ddca"},
+            "calories": True,
+            "protein": True,
+            "fat": True,
+            "carbohydrates": False,
+            "userid": userEmail,
+            "timestamp": "2025-05-19",
+        },
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024ddcb"},
+            "calories": True,
+            "protein": True,
+            "fat": True,
+            "carbohydrates": True,
+            "userid": userEmail,
+            "timestamp": "2025-05-20",
+        },
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024ddcc"},
+            "calories": True,
+            "protein": True,
+            "fat": True,
+            "carbohydrates": True,
+            "userid": userEmail,
+            "timestamp": "2025-05-21",
+        },
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024ddcd"},
+            "calories": False,
+            "protein": True,
+            "fat": True,
+            "carbohydrates": True,
+            "userid": userEmail,
+            "timestamp": "2025-05-22",
+        },
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024ddce"},
+            "calories": True,
+            "protein": True,
+            "fat": True,
+            "carbohydrates": True,
+            "userid": userEmail,
+            "timestamp": "2025-05-23",
+        },
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024ddcf"},
+            "calories": True,
+            "protein": False,
+            "fat": True,
+            "carbohydrates": True,
+            "userid": userEmail,
+            "timestamp": "2025-05-24",
+        },
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024ddd0"},
+            "calories": True,
+            "protein": True,
+            "fat": True,
+            "carbohydrates": False,
+            "userid": userEmail,
+            "timestamp": "2025-05-25",
+        },
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024ddd1"},
+            "calories": True,
+            "protein": True,
+            "fat": False,
+            "carbohydrates": True,
+            "userid": userEmail,
+            "timestamp": "2025-05-26",
+        },
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024ddd2"},
+            "calories": True,
+            "protein": True,
+            "fat": True,
+            "carbohydrates": True,
+            "userid": userEmail,
+            "timestamp": "2025-05-27",
+        },
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024ddd3"},
+            "calories": True,
+            "protein": True,
+            "fat": True,
+            "carbohydrates": True,
+            "userid": userEmail,
+            "timestamp": "2025-05-28",
+        },
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024ddd4"},
+            "calories": True,
+            "protein": True,
+            "fat": True,
+            "carbohydrates": True,
+            "userid": userEmail,
+            "timestamp": "2025-05-29",
+        },
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024ddd5"},
+            "calories": False,
+            "protein": False,
+            "fat": True,
+            "carbohydrates": True,
+            "userid": userEmail,
+            "timestamp": "2025-05-30",
+        },
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024ddd6"},
+            "calories": True,
+            "protein": True,
+            "fat": True,
+            "carbohydrates": True,
+            "userid": userEmail,
+            "timestamp": "2025-05-31",
+        },
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024ddd7"},
+            "calories": True,
+            "protein": True,
+            "fat": False,
+            "carbohydrates": True,
+            "userid": userEmail,
+            "timestamp": "2025-06-01",
+        },
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024ddd8"},
+            "calories": True,
+            "protein": True,
+            "fat": True,
+            "carbohydrates": False,
+            "userid": userEmail,
+            "timestamp": "2025-06-02",
+        },
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024ddd9"},
+            "calories": True,
+            "protein": True,
+            "fat": True,
+            "carbohydrates": True,
+            "userid": userEmail,
+            "timestamp": "2025-06-03",
+        },
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024ddda"},
+            "calories": True,
+            "protein": True,
+            "fat": True,
+            "carbohydrates": True,
+            "userid": userEmail,
+            "timestamp": "2025-06-04",
+        },
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024dddb"},
+            "calories": True,
+            "protein": False,
+            "fat": True,
+            "carbohydrates": True,
+            "userid": userEmail,
+            "timestamp": "2025-06-05",
+        },
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024dddc"},
+            "calories": True,
+            "protein": True,
+            "fat": True,
+            "carbohydrates": True,
+            "userid": userEmail,
+            "timestamp": "2025-06-06",
+        },
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024dddd"},
+            "calories": True,
+            "protein": True,
+            "fat": False,
+            "carbohydrates": True,
+            "userid": userEmail,
+            "timestamp": "2025-06-07",
+        },
+        {
+            # "_id": {"$oid": "6845294727d84e4d2024dee4"},
+            "calories": True,
+            "protein": True,
+            "fat": False,
+            "carbohydrates": True,
+            "userid": userEmail,
+            "timestamp": "2025-06-08",
+        },
+    ]
+    find = mongo.findDocument(
+        DB_USERS,
+        COL_RECORD,
+        {"userid": userEmail},
+    )
+    if not find:
+        for record in recordData:
+            mongo.insertDocument(
+                DB_USERS,
+                COL_RECORD,
+                record,
+            )
+
 
 addSampleFoods("moderator@hw3.com")
+addSampleRecords("moderator@hw3.com")
 
 # I have no idea why the dev version requires every fetch/route to start with "/api".
 # The production version seemed to work fine without it.
@@ -645,7 +934,7 @@ def fetchgoals():
     )
     # If no goal found, returns error
     if not doc:
-        return jsonify({"error": "no goals found"}), 404
+        return jsonify({"error": "no goals found"}), 500
     # returns jsonify version of data within database to frontend
     return jsonify(
         {

@@ -22,17 +22,17 @@
             console.error("Failed to fetch info:", error);
         }
 
-        document
-            .getElementById("TESTFORM")!
-            .addEventListener("submit", function (e: SubmitEvent) {
-                e.preventDefault();
+        // document
+        //     .getElementById("TESTFORM")!
+        //     .addEventListener("submit", function (e: SubmitEvent) {
+        //         e.preventDefault();
 
-                // See backend for return codes
+        //         // See backend for return codes
 
-                let form = <HTMLElement>e.target!;
-                let textinput = (<HTMLInputElement>form.children[1]).value;
-                makeFriend(textinput);
-            });
+        //         let form = <HTMLElement>e.target!;
+        //         let textinput = (<HTMLInputElement>form.children[1]).value;
+        //         makeFriend(textinput);
+        //     });
     });
     /**
      * function to redirect to the login page
