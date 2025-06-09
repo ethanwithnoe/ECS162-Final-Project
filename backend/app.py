@@ -14,7 +14,8 @@ import os
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 import requests
-from datetime import datetime, timezone
+from apscheduler.schedulers.background import BackgroundScheduler
+from datetime import datetime, timezone, timedelta
 
 # region Debug Output
 
@@ -107,6 +108,10 @@ class MongoWrapper:
     def updateDocument(self, dbName, colName, valuesToSet, jsonObj={}):
         update_operation = {"$set": valuesToSet}
         return self.getCollection(dbName, colName).update_one(jsonObj, update_operation)
+    
+    # Finds a item based on a sorting field
+    def findDocumentSorted(self, dbName, colName, jsonObj={}, sort_field=None):
+        return self.getCollection(dbName, colName).find_one(jsonObj, sort=[sort_field])
 
 
 # create a wrapper object using the URI
@@ -119,6 +124,7 @@ COL_FOOD = "food"
 DB_USERS = "usersdb"
 COL_USERS = "users"
 COL_GOALS = "goals"
+COL_RECORD = "records"
 
 
 # Function to add Dex accounts to Database
@@ -424,8 +430,36 @@ def home(path=""):
             return send_from_directory(static_path, path)
         return send_from_directory(template_path, "index.html")
 
+#scheduler for goal function
+
+def goalcheck():
+    userid = session.get("user", {}).get("email", "INVALID")
+    currdate = datetime.now(timezone.utc).date().isoformat()
+    currgoal = mongo.findDocumentSorted(DB_USERS, COL_GOALS, {"userid": userid}, ("timestamp", -1))
+    daysfood = mongo.searchDocument(DB_FOOD, COL_FOOD, {"userid": userid, "timestamp": {"$regex": f"^{currdate}"}})
+
+    total = {
+        "calories": sum(float(food.get("calories", 0)) for food in daysfood),
+        "protein": sum(float(food.get("protein", 0)) for food in daysfood),
+        "fat": sum(float(food.get("fat", 0)) for food in daysfood),
+        "carbohydrates": sum(float(food.get("carbohydrates", 0)) for food in daysfood)
+    }
+    
+    record = {
+        "userid": userid,
+        "timestamp": currdate,
+        "calories": total["calories"] >= float(currgoal.get("calories", 0)),
+        "protein": total["protein"] >= float(currgoal.get("protein", 0)),
+        "fat": total["fat"] >= float(currgoal.get("fat", 0)),
+        "carbohydrates": total["carbohydrates"] >= float(currgoal.get("carbohydrates", 0))
+    }
+    mongo.insertDocument(DB_USERS, COL_RECORD, record)
+
+dailyscheduler = BackgroundScheduler()
+dailyscheduler.add_job(goalcheck, 'cron', hour=23, minute=59)
 
 if __name__ == "__main__":
+    dailyscheduler.start()
     app.run(debug=True, host="0.0.0.0", port=8000)
 
 USDA_API_KEY = os.getenv("USDA_API_KEY")
@@ -501,9 +535,7 @@ def fetchgoals():
     #Gets user object if valid
     user_email = session.get("user", {}).get("email", "INVALID")
     #Queries goals in database and finds the latest document 
-    doc = mongo.getCollection(DB_USERS, COL_GOALS). find_one(
-        {"userid": user_email}, sort=[("timestamp",-1)]
-    )
+    doc = mongo.findDocumentSorted(DB_USERS, COL_GOALS, {"userid": user_email}, ("timestamp", -1))
     #If no goal found, returns error
     if not doc:
         return jsonify({"error": "no goals found"}), 404
@@ -524,3 +556,43 @@ def fetchgoals():
         "fat":              doc.get("fat"),
         "carbohydrates":    doc.get("carbohydrates"),
     })
+
+@app.route('/api/addrecord', methods=['POST'])
+def addrecord():
+    data = request.json
+    data["userid"] = session.get("user", {}).get("email", "INVALID")
+    data["timestamp"] = datetime.now(timezone.utc).date().isoformat()
+
+    result = mongo.insertDocument(DB_USERS, COL_RECORD, data)  
+    return jsonify({
+        "userid": data.get("userid"),
+        "timestamp": data.get("timestamp"),
+        "calories": data.get("calories"),
+        "protein": data.get("protein"),
+        "fat": data.get("fat"),
+        "carbohydrates": data.get("carbohydrates"),
+        "inserted_id": str(result.inserted_id)
+    }), 201
+
+@app.route('/api/fetchrecords/<int:numrecords>', methods=['GET'])
+def fetchrecords(numrecords):
+    
+    userid = session.get("user", {}).get("email", "INVALID")
+    result = mongo.getCollection(DB_USERS, COL_RECORD).find({"userid": userid}).sort("timestamp", -1).limit(numrecords)
+    
+    records = []
+    for record in result:
+        records.append({
+            "timestamp": record.get("timestamp"),
+            "calories": record.get("calories"),
+            "protein": record.get("protein"),
+            "fat": record.get("fat"),
+            "carbohydrates": record.get("carbohydrates")
+        })
+
+    if not records:
+        return jsonify({"error": "no records found"}), 404
+    
+    return jsonify({
+        "records": records
+    }), 200
