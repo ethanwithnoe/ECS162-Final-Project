@@ -47,6 +47,8 @@
     async function handleFoodAdded(foodData: any) {
         console.log("Food added:", foodData);
         showAddFood = false;
+        //waits to refresh page so item gets added to list without refreshing
+        await loadMeals();
     }
     async function toggleAddFood() {
         showAddFood = !showAddFood;
@@ -90,9 +92,9 @@
                     <tr>
                         <th>Meal</th>
                         <th>Calories</th>
-                        <th>Protein</th>
-                        <th>Fat</th>
-                        <th>Carbohydrates</th>
+                        <th>Protein (g)</th>
+                        <th>Fat (g)</th>
+                        <th>Carbohydrates (g)</th>
                     </tr>
                 </thead>
                 <tbody>
