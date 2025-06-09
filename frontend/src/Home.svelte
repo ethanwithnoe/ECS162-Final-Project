@@ -110,9 +110,8 @@
 
 <main>
     <div class="home-container">
-        <h1 class="welcome">Welcome</h1>
-
-        <div class="button-row">
+        <h1 class="welcome">Welcome to Our Meal Tracker! We Help Users Track Their Daily Calories, Protein, Carbohydrates, and Fat Intake For The Day. Please <span onclick={redirectToLogin}> Login </span> to Continue.</h1>
+        <!-- <div class="button-row">
             <button onclick={redirectToLogin}> TESTBUTTON LOGIN </button>
             <button onclick={redirectToLogout}> TESTBUTTON LOGOUT </button>
             <button onclick={getinfo}> TESTBUTTON GETINFO </button>
@@ -123,14 +122,14 @@
                 <AddFood onFoodAdded={handleFoodAdded} />
             {/if}
         </div>
-        <!-- See onMount for how this is implemented -->
+        <!- See onMount for how this is implemented --
         <div class="form-row">
             <form id="TESTFORM">
                 <label>Friend's Email:</label>
                 <input type="text" id="fname" name="fname" />
                 <button type="submit">Make Friend</button>
             </form>
-        </div>
+        </div> -->
     </div>
 </main>
 
@@ -151,6 +150,7 @@
     h1 {
         font-size: 3rem;
         margin-bottom: 2rem;
+        width: 75%;
     }
 
     .button-row {
@@ -159,6 +159,17 @@
         gap: 1rem;
         margin-bottom: 2rem;
         justify-content: center;
+    }
+
+    span {
+        text-decoration: underline;
+        /* color:#666; */
+    }
+
+    span:hover{
+        background-color: #2a2a2a;
+        cursor: pointer;
+        color: #ccc;
     }
 
     button {

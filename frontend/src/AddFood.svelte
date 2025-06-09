@@ -4,6 +4,7 @@
     let searchQuery = "";
     let searchResults: any[] = [];
     let chosenFood: any = null;
+    let visibleCount = 10;
     let userMacros = {
         name: "",
         calories: 0,
@@ -32,7 +33,7 @@
         }
             const data = await res.json();
             console.log("search results:", data)
-            searchResults = data.foods.slice(0, 50); 
+            searchResults = data.foods.slice(0, 100); 
         } catch (e) {
             console.error("Network Error:", e);
             searchResults = [];
@@ -59,13 +60,16 @@
         });
         const result = await res.json();
         console.log("Saved:", result);
+        visibleCount = 5;
         if(onFoodAdded) onFoodAdded(result);
     }
 
     function nutrientByName(item: any, nutrientName: string) { 
         return item.foodNutrients.find((n: any) => n.nutrientName === nutrientName)?.value || "?";
     }
-
+    function viewMore() {
+        visibleCount = visibleCount + 10;
+    }
 </script>
 
 <div> 
@@ -76,10 +80,9 @@
         chosenFood = { description: "Enter Manually" };
         manualMode = true;
     }}>+ Add Food Manually</button>
-
     {#if searchResults.length > 0} 
         <ul>
-            {#each searchResults as item}
+            {#each searchResults.slice(0, visibleCount) as item}
                 <li on:click={() => selectFood(item)}>
                     <strong>{item.brandName ? item.brandName + ":" : ""}</strong> {item.description}<br /> 
                     Calories:       {nutrientByName(item, "Energy" )} kcal |
@@ -89,6 +92,9 @@
                 </li>
             {/each}
         </ul>
+        {#if visibleCount < searchResults.length}
+                    <button on:click={viewMore}>View More</button>
+        {/if}
     {:else} 
         <p>No results</p>
     {/if}
