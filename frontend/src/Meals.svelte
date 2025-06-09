@@ -31,15 +31,16 @@
 </script>
 
 <div class="container">
-    <button class="toggle" onclick={toggleSidebar}>Pages</button>
+    <button class="toggle" onclick={toggleSidebar}>≡ Pages</button>
     
     <div class="layout">
         {#if showSidebar}
             <aside class="sidebar">
                 <ul>
-                    <li class="active"><button onclick={redirectToDashboard}>Dashboard</button></li>
-                    <li class="active"><button onclick={redirectToMeals}>My Meals</button></li>
-                    <li class="active"><button onclick={redirectToGoals}>My Goals</button></li>
+                    <li onclick={redirectToDashboard}>Dashboard</li>
+                    <li>My Meals</li>
+                    <li onclick={redirectToGoals}>My Goals</li>
+                    <li onclick={redirectToLogout}>Logout</li>
                 </ul>
             </aside>
         {/if}
@@ -112,13 +113,18 @@
 
     .sidebar ul {
         list-style: none;
-        /* padding: 0; */
+        padding: 0;
     }
 
     .sidebar li {
+        /* width: 100%; */
         padding: 0.75rem;
         cursor: pointer;
         border-radius: 6px;
+    }
+
+    .sidebar li:hover, .sidebar li:active {
+        background-color: #2a2a2a;
     }
 
     .content {

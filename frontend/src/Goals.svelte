@@ -137,15 +137,16 @@
 
 <div class="container">
     <!--Button to togglesidebar-->
-    <button class="toggle" on:click={toggleSidebar}>Pages</button>
+    <button class="toggle" onclick={toggleSidebar}>≡ Pages</button>
     
     <div class="layout">
         {#if showSidebar}
             <aside class="sidebar">
                 <ul>
-                    <li class="active"><button on:click={redirectToDashboard}>Dashboard</button></li>
-                    <li class="active"><button on:click={redirectToMeals}>My Meals</button></li>
-                    <li class="active"><button on:click={redirectToGoals}>My Goals</button></li>
+                    <li onclick={redirectToDashboard}>Dashboard</li>
+                    <li onclick={redirectToMeals}>My Meals</li>
+                    <li>My Goals</li>
+                    <li onclick={redirectToLogout}>Logout</li>
                 </ul>
             </aside>
         {/if}
@@ -188,7 +189,7 @@
                 </tbody>
             </table>
 
-            <button on:click={calculateGoals}>Calculate</button>
+            <button onclick={calculateGoals}>Calculate</button>
 
             <h3> Here is your recommended Calorie Intake. For every pound a week you'd like to lose, subtract by 500! Update the values if you wish! The statistics provided in the table below are from the bare minimum multiplier based on your Calories from the USDA's Dietary Guidelines. The general goal of your calorie intake per each following nutrient is: protein: 10-35%, carbohydrates: 45-65%, fat: 20-35%. We suggest  </h3>
             <p>{userGoals.calories} Calories/day</p>
@@ -219,7 +220,7 @@
             <!--Ensures submit button doesnt move and is positioned side by side with update status-->
             <div style="display: flex; align-items: center; gap: 10px;">
                 <!-- Submit Goals button that will submit Goals to database via backend call-->
-                <button on:click={submitGoals}>Submit</button>
+                <button onclick={submitGoals}>Submit</button>
                     <p class="success message" style="visibility: {submitMsg ? 'visible' : 'hidden'};">
                         {submitMsg}
                     </p>
@@ -276,13 +277,18 @@
 
     .sidebar ul {
         list-style: none;
-        /* padding: 0; */
+        padding: 0;
     }
 
     .sidebar li {
+        /* width: 100%; */
         padding: 0.75rem;
         cursor: pointer;
         border-radius: 6px;
+    }
+
+    .sidebar li:hover, .sidebar li:active {
+        background-color: #2a2a2a;
     }
 
     .content {
