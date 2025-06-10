@@ -4,6 +4,10 @@
     import LineChart from '../components/LineChart.svelte';
     import BarChart from '../components/BarChart.svelte';
     import ProgressChart from '../components/RadialProgress.svelte';
+
+    let searchEmail ="";
+    let addFriendMsg = "";
+    let friendList = [];
     let meals = [];
     let error = "";
     let userGoalProgress = {
@@ -179,30 +183,21 @@
         window.location.href = "http://localhost:8000/goals";
     }
 
-    onMount(async () => {
-        const res = await fetch("/api/getinfo");
-        const data = await res.json();
-        if (!data.email) {
-            window.location.href = "/";
-        } else {
-            userEmail = data.email;
-        }
-        await fetchInfo();
-        await loaddailyMeals();
-        setFriendsList();
-        getFoodLogs();
-        filteredProgress = await filterProgressData(view);
-    });
-
     async function fetchFriendsList() {
         try {
             const res = await fetch("/api/get/friendslist");
             const data = await res.json();
-            return data;
+            // return data;
+            if (data.result === 0) {
+                friendList = data.friendsList;
+            } else {
+                console.log("Failed to fetch friends:", data);
+            }
         } catch (error) {
             console.log("Error fetching friends list: ", error);
         }
     }
+
     async function setFriendsList() {
         const FLelem = <HTMLUListElement>(
             document.getElementById("friendslist")!
@@ -277,6 +272,65 @@
         userGoalProgress.fatleft =              userGoals.fat - userGoalProgress.fat;
         userGoalProgress.carbohydratesleft =    userGoals.carbohydrates - userGoalProgress.carbohydrates;
     }
+
+    async function addFriend() {
+        if(!searchEmail) {
+            addFriendMsg = "Please enter an Email.";
+            return;
+        }
+        const formData = new FormData();
+        formData.append("email", searchEmail);
+
+        try {
+            const res = await fetch("/api/post/makefriend", {method: "POST", body: formData,});
+            const data = await res.json();
+
+            switch(data.result){
+                case 0:
+                    addFriendMsg = "Successfully added Friend";
+                    break;
+                case 1:
+                    addFriendMsg = "You are already Friends.";
+                    break;
+                case 10:
+                    addFriendMsg = "You must be Logged In";
+                    break;
+                case 11:
+                    addFriendMsg = "Error: could not access friend list.";
+                    break;
+                case 12:
+                    addFriendMsg = "Error: user does not exist.";
+                    break;
+                case 13:
+                    addFriendMsg = "You cannot add yourself.";
+                    break;
+                default:
+                    addFriendMsg = "Unknown Error Occurred.";
+                    break;
+            }
+        } catch (err) {
+            addFriendMsg = "Failed to add friend.";
+            console.error(err)
+        }
+        searchEmail = "";
+    }
+
+
+    onMount(async () => {
+        const res = await fetch("/api/getinfo");
+        const data = await res.json();
+        if (!data.email) {
+            window.location.href = "/";
+        } else {
+            userEmail = data.email;
+        }
+        await fetchInfo();
+        await loaddailyMeals();
+        setFriendsList();
+        getFoodLogs();
+        filteredProgress = await filterProgressData(view);
+        fetchFriendsList();
+    });
 </script>
 
 <div class="dashboard-container">
@@ -428,13 +482,23 @@
 
                 <div class="card">
                     <h3>My Friends</h3>
+                    <input type="email" bind:value={searchEmail} placeholder="Enter Email" class="input-style">
+                    <button onclick={addFriend}>Add</button>
+                    {#if addFriendMsg}
+                        <p>{addFriendMsg}</p>
+                    {/if}
                     <ul id="friendslist">
+                        <!-- <li>Name - email</li>
                         <li>Name - email</li>
                         <li>Name - email</li>
                         <li>Name - email</li>
                         <li>Name - email</li>
-                        <li>Name - email</li>
-                        <li>Name - email</li>
+                        <li>Name - email</li> -->
+                        {#each friendList as [email, username]}
+                            <li class="friend-list">{email}</li>
+                        {:else}
+                            <li>Your Friends List is Empty.</li>
+                        {/each}
                     </ul>
                 </div>
 
@@ -705,5 +769,11 @@
         border-radius: 6px;
         cursor: pointer;
     } */
-
+    .friend-list {
+        padding: 0.5rem;
+        background: #2a2a2a;
+        margin-bottom: 0.5rem;
+        border-radius: 5px;
+        color: white;
+    }
 </style>

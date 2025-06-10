@@ -317,7 +317,7 @@ def removeFriends():
 #     00: Successfully retrieved user's friendlist
 #     10: User is not logged in
 #     11: Unable to retrieve user's friendlist
-@app.route("/api/get/friendslist")
+@app.route("/api/get/friendslist", methods=["GET"])
 def getFriendsList():
     # check that user is logged in
     user = session.get("user")
