@@ -202,43 +202,8 @@
         }
     }
 
-    async function setFriendsList() {
-        const FLelem = <HTMLUListElement>(
-            document.getElementById("friendslist")!
-        );
+    
 
-        // clear current list
-        while (FLelem.lastElementChild) {
-            FLelem.removeChild(FLelem.lastElementChild);
-        }
-
-        const friendslist = await fetchFriendsList();
-        if (friendslist.result == 0) {
-            for (
-                let index = 0;
-                index < friendslist.friendsList.length;
-                index++
-            ) {
-                const friendInfo = friendslist.friendsList[index];
-                const newEntry = <HTMLLIElement>document.createElement("li");
-
-                newEntry.textContent = `${friendInfo[1]} (${friendInfo[0]})`;
-
-                FLelem.appendChild(newEntry);
-            }
-            if (friendslist.friendsList.length == 0) {
-                const newEntry = <HTMLLIElement>document.createElement("li");
-                newEntry.textContent = `Your Friends List is Empty.`;
-                FLelem.appendChild(newEntry);
-            }
-        } else {
-            const newEntry = <HTMLLIElement>document.createElement("li");
-
-            newEntry.textContent = `Error retrieving friends list`;
-
-            FLelem.appendChild(newEntry);
-        }
-    }
     async function fetchInfo() {
         try {
             const res = await fetch('/api/fetchgoals');
@@ -292,6 +257,7 @@
             switch(data.result){
                 case 0:
                     addFriendMsg = "Successfully added Friend";
+                    fetchFriendsList();
                     break;
                 case 1:
                     addFriendMsg = "You are already Friends.";
@@ -330,30 +296,11 @@
         }
         await fetchInfo();
         await loaddailyMeals();
-        setFriendsList();
         getFoodLogs();
         filteredProgress = await filterProgressData(view);
         fetchFriendsList();
     });
 
-    
-
-
-    onMount(async () => {
-        const res = await fetch("/api/getinfo");
-        const data = await res.json();
-        if (!data.email) {
-            window.location.href = "/";
-        } else {
-            userEmail = data.email;
-        }
-        await fetchInfo();
-        await loaddailyMeals();
-        setFriendsList();
-        getFoodLogs();
-        filteredProgress = await filterProgressData(view);
-        fetchFriendsList();
-    });
 </script>
 
 <div class="dashboard-container">
