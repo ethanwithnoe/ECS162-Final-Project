@@ -285,6 +285,43 @@
         searchEmail = "";
     }
 
+    async function removeFriend(email:string) {
+        try {
+            const formData = new FormData();
+            formData.append("email", email);
+            const res = await fetch("/api/post/removefriend", {method: "POST", body: formData});
+            const data = await res.json();
+
+            switch(data.result){
+                case 0:
+                    addFriendMsg = "Successfully removed Friend";
+                    fetchFriendsList();
+                    break;
+                case 1:
+                    addFriendMsg = "You are already not Friends.";
+                    break;
+                case 10:
+                    addFriendMsg = "You must be Logged In";
+                    break;
+                case 11:
+                    addFriendMsg = "Error: could not access friend list.";
+                    break;
+                case 12:
+                    addFriendMsg = "Error: user does not exist.";
+                    break;
+                case 13:
+                    addFriendMsg = "You cannot remove yourself.";
+                    break;
+                default:
+                    addFriendMsg = "Unknown Error Occurred.";
+                    break;
+            }
+        } catch (err) {
+            addFriendMsg = "Failed to remove friend.";
+            console.error(err)
+        }
+    }
+
 
     onMount(async () => {
         const res = await fetch("/api/getinfo");
@@ -481,7 +518,14 @@
                     {#if friendList && friendList.length > 0}
                         <ul id="friendslist">
                             {#each friendList as [email, username]}
-                                <li class="friend-list">{email}</li>
+                                <li class="friend-list">{username} ({email})
+                                    <button 
+                                        class="friend_remove_button"
+                                        onclick={(e) => {removeFriend(email)}}
+                                    >
+                                        Remove
+                                    </button>
+                                </li>
                             {/each}
                         </ul>
                     {:else}
