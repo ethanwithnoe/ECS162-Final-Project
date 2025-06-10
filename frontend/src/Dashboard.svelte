@@ -385,7 +385,14 @@
                         />
                     {/if}
                 </div>
-                <small>Calorie Goal: {userGoals.calories}, just {userGoalProgress.caloriesleft} off!</small>
+                <small class="goalDiff">
+                    Calorie Goal: {userGoals.calories},
+                    {#if userGoalProgress.caloriesleft > 0}
+                        just {userGoalProgress.caloriesleft} off!
+                    {:else}
+                        complete!
+                    {/if}
+                </small>
             </div>
 
             <div class="card">
@@ -401,7 +408,14 @@
                         />
                     {/if}
                 </div>
-                <small>Protein Goal: {userGoals.protein}, just {userGoalProgress.proteinleft} off!</small>
+                <small class="goalDiff">
+                    Protein Goal: {userGoals.protein},
+                    {#if userGoalProgress.proteinleft > 0}
+                        just {userGoalProgress.proteinleft} off!
+                    {:else}
+                        complete!
+                    {/if}
+                </small>
             </div>
 
             <div class="card">
@@ -417,7 +431,14 @@
                         />
                     {/if}
                 </div>
-                <small>Carbohydrate Goal: {userGoals.carbohydrates}, just {userGoalProgress.carbohydratesleft} off!</small>
+                <small class="goalDiff">
+                    Carbohydrate Goal: {userGoals.carbohydrates},
+                    {#if userGoalProgress.carbohydratesleft > 0}
+                        just {userGoalProgress.carbohydratesleft} off!
+                    {:else}
+                        complete!
+                    {/if}
+                </small>
             </div>
 
             <div class="card">
@@ -433,7 +454,14 @@
                         />
                     {/if}
                 </div>
-                <small>Fat Goal: {userGoals.fat}, just {userGoalProgress.fatleft} off!</small>
+                <small class="goalDiff">
+                    Fat Goal: {userGoals.fat},
+                    {#if userGoalProgress.fatleft > 0}
+                        just {userGoalProgress.fatleft} off!
+                    {:else}
+                        complete!
+                    {/if}
+                </small>
             </div>
         </div>
 
