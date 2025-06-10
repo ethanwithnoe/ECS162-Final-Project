@@ -40,12 +40,24 @@
 
             console.log(foodData);
 
+            // filteredData = foodData
+            // .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()) // Sort by timestamp
+            // .map(meal => ({
+            //     timestamp: meal.timestamp,
+            //     nutrientValue: meal[selectedNutrient as keyof Meal] as number,  // Assert nutrientValue is a number
+            // }));
+
             filteredData = foodData
-            .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()) // Sort by timestamp
-            .map(meal => ({
-                timestamp: meal.timestamp,
-                nutrientValue: meal[selectedNutrient as keyof Meal] as number,  // Assert nutrientValue is a number
-            }));
+                .filter(meal => {
+                    const mealDate = new Date(meal.timestamp);
+                    mealDate.setHours(0, 0, 0, 0);
+                    return mealDate.getTime() === today.getTime();
+                })
+                .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
+                .map(meal => ({
+                    timestamp: meal.timestamp,
+                    nutrientValue: meal[selectedNutrient as keyof Meal] as number,
+                }));
             
         } catch (error) {
             console.error("Failed fetch food data:", error);

@@ -226,7 +226,13 @@ def logout():
 
 # Function to add sample food logs to a user
 # Does not do anything if user has *any* food logged already
-def addSampleFoods(userEmail: str):
+def addSampleFoods(userEmail: str, month: int, day: int):
+    def toStr(num: int):
+        return str(num).zfill(2)
+
+    todayStr = f"2025-{toStr(month)}-{toStr(day)}"
+    lastMonth = f"2025-{toStr(month-1)}-{toStr(day)}"
+
     foodData = [
         {
             "calories": 300,
@@ -235,7 +241,7 @@ def addSampleFoods(userEmail: str):
             "protein": 20,
             "description": "Morning Oatmeal",
             "name": "Oatmeal",
-            "timestamp": "2025-05-08T08:00:00.000000-08:00",  # 8:00 AM > falls into the 8 AM bin
+            "timestamp": f"{lastMonth}T08:00:00.000000-08:00",  # 8:00 AM > falls into the 8 AM bin
             "userid": userEmail,
             # "_id": "119"
         },
@@ -246,7 +252,7 @@ def addSampleFoods(userEmail: str):
             "protein": 25,
             "description": "Chicken Salad",
             "name": "Grilled Chicken Salad",
-            "timestamp": "2025-06-08T10:15:00.000000-08:00",
+            "timestamp": f"{todayStr}T10:15:00.000000-08:00",
             "userid": userEmail,
             # "_id": "11"
         },
@@ -257,7 +263,7 @@ def addSampleFoods(userEmail: str):
             "protein": 10,
             "description": "Apple and Peanut Butter",
             "name": "Snack",
-            "timestamp": "2025-06-08T12:30:00.000000-08:00",
+            "timestamp": f"{todayStr}T12:30:00.000000-08:00",
             "userid": userEmail,
             # "_id": "11"
         },
@@ -268,7 +274,7 @@ def addSampleFoods(userEmail: str):
             "protein": 40,
             "description": "Dinner - Steak and Potatoes",
             "name": "Steak Dinner",
-            "timestamp": "2025-06-08T17:00:00.000000-08:00",
+            "timestamp": f"{todayStr}T17:00:00.000000-08:00",
             "userid": userEmail,
             # "_id": "11"
         },
@@ -279,7 +285,7 @@ def addSampleFoods(userEmail: str):
             "protein": 15,
             "description": "Evening Smoothie",
             "name": "Smoothie",
-            "timestamp": "2025-06-08T20:00:00.000000-08:00",
+            "timestamp": f"{todayStr}T20:00:00.000000-08:00",
             "userid": userEmail,
             # "_id": "11"
         },
@@ -296,6 +302,7 @@ def addSampleFoods(userEmail: str):
                 COL_FOOD,
                 food,
             )
+
 
 # Function to add sample record data to a user
 # Does not do anything if user has *any* recordgoal data already
@@ -586,7 +593,7 @@ def addSampleRecords(userEmail: str):
             )
 
 
-addSampleFoods("moderator@hw3.com")
+addSampleFoods("moderator@hw3.com", month=6, day=9)
 addSampleRecords("moderator@hw3.com")
 
 # I have no idea why the dev version requires every fetch/route to start with "/api".
@@ -1070,10 +1077,10 @@ def getUserFoods():
         # if (earliest is None or timestamp > earliest) and (
         #     latest is None or timestamp < latest
         # ):
-            jsonDoc = doc.copy()
-            # convert ObjectID to string
-            jsonDoc["_id"] = str(jsonDoc["_id"])
-            foodList.append(jsonDoc)
+        jsonDoc = doc.copy()
+        # convert ObjectID to string
+        jsonDoc["_id"] = str(jsonDoc["_id"])
+        foodList.append(jsonDoc)
     return jsonify({"result": 0, "foodList": foodList})
 
 
