@@ -515,19 +515,25 @@
                     {#if addFriendMsg}
                         <p>{addFriendMsg}</p>
                     {/if}
-                    <ul id="friendslist">
-                        <!-- <li>Name - email</li>
-                        <li>Name - email</li>
-                        <li>Name - email</li>
-                        <li>Name - email</li>
-                        <li>Name - email</li>
-                        <li>Name - email</li> -->
-                        {#each friendList as [email, username]}
-                            <li class="friend-list">{email}</li>
-                        {:else}
-                            <li>Your Friends List is Empty.</li>
-                        {/each}
-                    </ul>
+                    {#if friendList && friendList.length > 0}
+                        <ul id="friendslist">
+                            <!-- <li>Name - email</li>
+                            <li>Name - email</li>
+                            <li>Name - email</li>
+                            <li>Name - email</li>
+                            <li>Name - email</li>
+                            <li>Name - email</li> -->
+                            
+                            {#each friendList as [email, username]}
+                            
+                                <li class="friend-list">{email}</li>
+                            {/each}
+                        </ul>
+                    {:else}
+                        <p>Your Friends List is Empty.</p>
+                            
+                        
+                    {/if}
                 </div>
 
                 <div class="card large">
