@@ -58,14 +58,17 @@
         const achievedDays = filteredData.filter(d => d[selectedNutrient]).length;
 
         if (totalDays === 0) {
-        // No data: show a message or empty chart
-        chartGroup.append('text')
-            .attr('text-anchor', 'middle')
-            .style('font-size', '1.5rem')
-            .style('fill', '#666')
-            .text('No data');
-        return;
+            // No data: show a message or empty chart
+            chartGroup.append('text')
+                .attr('text-anchor', 'middle')
+                .style('font-size', '1.5rem')
+                .style('fill', '#666')
+                .text('No data');
+            return;
         }
+
+        // Calculate the completion percentage
+        const completionPercentage = (achievedDays / totalDays) * 100;
 
         // Scale from 0 to totalDays mapped to 0 to 2π radians
         const angleScale = d3.scaleLinear()
@@ -105,42 +108,32 @@
                 startAngle: 0,
                 endAngle: angleScale(achievedDays),
             })!)
-            .attr('fill', '#07c'); // 'black' if you want it to be black instead, for frontend devs
+            .attr('fill', 'black'); // 'black' if you want it to be black instead, for frontend devs
 
-        // Center text: achieved days count
+        // Center text: completion percentage
         chartGroup.append('text')
-        .attr('text-anchor', 'middle')
-        .attr('dy', '-0.2em')
-        .style('font-size', '2rem')
-        .style('fill', 'black')
-        .text(achievedDays);
+            .attr('text-anchor', 'middle')
+            .attr('dy', '-0.2em')
+            .style('font-size', `${radius * .2}px`)  // Scale the text size relative to the radius
+            .style('fill', 'black')
+            .text(`${completionPercentage.toFixed(1)}%`);  // Display percentage with 1 decimal place
 
         // Center text: total days label
         chartGroup.append('text')
-        .attr('text-anchor', 'middle')
-        .attr('dy', '1.2em')
-        .style('font-size', '1rem')
-        .style('fill', 'black')
-        .text(`of ${totalDays} days`);
-
-        // Nutrient label below the donut (outside the group)
-        svgSelection.append('text')
-        .attr('x', width / 2)
-        .attr('y', height - 10)
-        .attr('text-anchor', 'middle')
-        .style('fill', 'black')
-        .style('font-family', 'Inter, system-ui, sans-serif')
-        .style('font-weight', '600')
-        .text(selectedNutrient.charAt(0).toUpperCase() + selectedNutrient.slice(1));
+            .attr('text-anchor', 'middle')
+            .attr('dy', '1.2em')
+            .style('font-size', `${radius * 0.2}px`)  // Scale the text size relative to the radius
+            .style('fill', 'black')
+            .text(`completion`);
     }
 
     onMount(() => drawChart());
     afterUpdate(() => drawChart());
-    </script>
+</script>
 
-    <svg bind:this={svg} {width} {height} style="background: #fff;"></svg>
+<svg bind:this={svg} {width} {height} style="background: #fff;"></svg>
 
-    <style>
+<style>
     svg {
         font-family: 'Inter', system-ui, sans-serif;
         color: black;
