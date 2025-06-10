@@ -302,8 +302,8 @@
                         {filteredData}
                         {goalValue}
                         {buffer}
-                        height={400}
-                        width={600}
+                        height={200}
+                        width={300}
                         selectedNutrient={selectedNutrient}
                         startHour={6}
                         endHour={23}

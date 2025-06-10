@@ -1,6 +1,7 @@
 <script lang="ts">
     import  AddFood  from "./AddFood.svelte";
     import { onMount } from "svelte";
+    import Logo from "../assets/Logo.png";
     //   import Dashboard from './Dashboard.svelte';
 
     let showAddFood = false;
@@ -110,7 +111,10 @@
 
 <main>
     <div class="home-container">
-        <h1 class="welcome">Welcome to Our Meal Tracker! We Help Users Track Their Daily Calories, Protein, Carbohydrates, and Fat Intake For The Day. Please <span onclick={redirectToLogin}> Login </span> to Continue.</h1>
+        <img src={Logo} alt="Logo" class="logo" /> 
+        <h1 class="title">Opter Meal Tracker</h1>
+        <h2 class="subtitle">Opt into a healthier life style</h2>
+        <h3 class="login-prompt">Please <span onclick={redirectToLogin}> Login </span> to Continue.</h3>
         <!-- <div class="button-row">
             <button onclick={redirectToLogin}> TESTBUTTON LOGIN </button>
             <button onclick={redirectToLogout}> TESTBUTTON LOGOUT </button>
@@ -134,23 +138,41 @@
 </main>
 
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
     .home-container {
         display: flex;
         justify-content: center;
         align-items: center;
         height: 100vh;
         width: 100%;
-        background-color: #1e1e1e;
+        background-color: #ffffff; /* changed background to white */
         flex-direction: column;
-        color: #fff;
+        color: #000; /* black text */
         text-align: center;
         overflow: hidden;
+        font-family: 'Inter', sans-serif;
     }
 
-    h1 {
+    .logo { 
+        width: 250px;
+    }
+
+    h1.title {
         font-size: 3rem;
-        margin-bottom: 2rem;
-        width: 75%;
+        margin: 0 0 0 0;
+    }
+
+    h2.subtitle {
+        font-size: 1.5rem;
+        font-weight: 400;
+        margin: 0 0 0 0;
+    }
+
+    h3.login-prompt {
+        font-size: 1.2rem;
+        font-weight: 500;
+        margin: 1;
     }
 
     .button-row {
@@ -164,12 +186,13 @@
     span {
         text-decoration: underline;
         /* color:#666; */
+        color: blue; /* Blue text */
+        cursor: pointer;
+        transition: color 0.2s ease;
     }
 
-    span:hover{
-        background-color: #2a2a2a;
-        cursor: pointer;
-        color: #ccc;
+    span:hover {
+        color: #104e8b; /* Darker blue on hover */
     }
 
     button {

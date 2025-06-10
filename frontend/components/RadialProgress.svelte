@@ -105,7 +105,7 @@
                 startAngle: 0,
                 endAngle: angleScale(achievedDays),
             })!)
-            .attr('fill', '#07c'); // 'black' if you want it to be black instead, for frontend devs
+            .attr('fill', 'black'); // 'black' if you want it to be black instead, for frontend devs
 
         // Center text: achieved days count
         chartGroup.append('text')
