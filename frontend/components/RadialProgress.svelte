@@ -34,7 +34,7 @@
     export let width: number = 300;
     export let height: number = 300;
 
-    const margin = { top: 20, right: 20, bottom: 40, left: 20 };
+    const margin = { top: 10, right: 10, bottom: 10, left: 10 };
 
     let svg: SVGSVGElement;
 
