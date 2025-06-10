@@ -268,8 +268,8 @@
                     <ProgressChart
                         filteredData={filteredProgress}
                         {selectedNutrient}
-                        width={300}
-                        height={300}
+                        width={150}
+                        height={150}
                     />
                 {/if}
                 <small>Calorie Goal: {userGoals.calories}</small>
