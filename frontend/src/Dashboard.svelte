@@ -4,7 +4,18 @@
     import LineChart from '../components/LineChart.svelte';
     import BarChart from '../components/BarChart.svelte';
     import ProgressChart from '../components/RadialProgress.svelte';
-
+    let meals = [];
+    let error = "";
+    let userGoalProgress = {
+        calories: 0,
+        protein: 0,
+        fat: 0,
+        carbohydrates: 0,
+        caloriesleft: 0,
+        proteinleft: 0,
+        fatleft: 0,
+        carbohydratesleft: 0
+    }
     type Meal = {
         calories: number;
         carbohydrates: number;
@@ -29,6 +40,23 @@
     //         nutrientValue: meal[selectedNutrient as keyof Meal] as number,  // Assert nutrientValue is a number
     //     }));
     //END MOCK SECTION
+    async function loaddailyMeals() {
+        try {
+            //Calls backend function that gets the foods user added from today
+            const res = await fetch("/api/getuserfoodsTD", {credentials: "include"});
+            const data = await res.json();
+            if(data.result === 0) {
+                //stores meals and calls trackgoalprogress to fill in goal progress data
+                meals = data.foodList;
+                trackGoalProgress();
+            } else {
+                error = "Please Login to View Your Meals."
+            }
+        } catch (err) {
+            error = "Error loading meals."
+            console.log(error);
+        }
+    }
     
     async function getFoodLogs() {
         selectedNutrient = "calories";  // Define the default selected nutrient
@@ -147,10 +175,10 @@
         } else {
             userEmail = data.email;
         }
-
+        await fetchInfo();
+        await loaddailyMeals();
         setFriendsList();
         getFoodLogs();
-        fetchInfo();
         filteredProgress = await filterProgressData(view);
     });
 
@@ -220,6 +248,23 @@
             console.error("No user data", e);   //Prints that user has no data saved in mongo database
         }
     }
+    //Calculates goal progress using the food from today
+    async function trackGoalProgress() {
+        userGoalProgress.calories =         0;
+        userGoalProgress.protein =          0;
+        userGoalProgress.fat =              0;
+        userGoalProgress.carbohydrates =    0;
+        for(let meal of meals) {
+            userGoalProgress.calories =         Math.round(userGoalProgress.calories + meal.calories);
+            userGoalProgress.protein =          Math.round(userGoalProgress.protein + meal.protein);
+            userGoalProgress.fat =              Math.round(userGoalProgress.fat + meal.fat);
+            userGoalProgress.carbohydrates =    Math.round(userGoalProgress.carbohydrates + meal.carbohydrates);
+        }
+        userGoalProgress.caloriesleft =         userGoals.calories - userGoalProgress.calories;
+        userGoalProgress.proteinleft =          userGoals.protein - userGoalProgress.protein;
+        userGoalProgress.fatleft =              userGoals.fat - userGoalProgress.fat;
+        userGoalProgress.carbohydratesleft =    userGoals.carbohydrates - userGoalProgress.carbohydrates;
+    }
 </script>
 
 <div class="dashboard-container">
@@ -263,7 +308,7 @@
         <div class="summary-cards">
             <div class="card">
                 <h3>Calories</h3>
-                <p>placeholder</p>
+                <p>Current Progress: {userGoalProgress.calories}</p>
                 {#if filteredProgress}
                     <ProgressChart
                         filteredData={filteredProgress}
@@ -272,25 +317,25 @@
                         height={300}
                     />
                 {/if}
-                <small>Calorie Goal: {userGoals.calories}</small>
+                <small>Calorie Goal: {userGoals.calories}, just {userGoalProgress.caloriesleft} off!</small>
             </div>
 
                 <div class="card">
                     <h3>Protein</h3>
-                    <p>placeholder</p>
-                    <small>Protein Goal: {userGoals.protein}</small>
+                    <p>Current Progress: {userGoalProgress.protein}</p>
+                    <small>Protein Goal: {userGoals.protein}, just {userGoalProgress.proteinleft} off!</small>
                 </div>
 
                 <div class="card">
                     <h3>Carbohydrates</h3>
-                    <p>placeholder</p>
-                    <small>Carbohydrate Goal: {userGoals.carbohydrates}</small>
+                    <p>Current Progress: {userGoalProgress.carbohydrates}</p>
+                    <small>Carbohydrate Goal: {userGoals.carbohydrates}, just {userGoalProgress.carbohydratesleft} off!</small>
                 </div>
 
                 <div class="card">
                     <h3>Fat</h3>
-                    <p>placeholder</p>
-                    <small>Fat Goal: {userGoals.fat}</small>
+                    <p>Current Progress: {userGoalProgress.fat}</p>
+                    <small>Fat Goal: {userGoals.fat}, just {userGoalProgress.fatleft} off!</small>
                 </div>
             </div>
 
@@ -312,47 +357,27 @@
             </div>
 
                 <div class="card">
-                    <h3>Add from My Meals</h3>
+                    <h3>Your Meals so Far</h3>
                     <table>
                         <thead>
                             <tr>
-                                <th>Name</th>
+                                <th>Meal</th>
                                 <th>Calories</th>
                                 <th>Protein</th>
+                                <th>Fat</th>
+                                <th>Carbs</th>
                             </tr>
                         </thead>
-                        
                         <tbody>
-                            <tr>
-                                <th>Placeholder</th>
-                                <th>Placeholder</th>
-                                <th>Placeholder</th>
-                            </tr>
-                            <tr>
-                                <th>Placeholder</th>
-                                <th>Placeholder</th>
-                                <th>Placeholder</th>
-                            </tr>
-                            <tr>
-                                <th>Placeholder</th>
-                                <th>Placeholder</th>
-                                <th>Placeholder</th>
-                            </tr>
-                            <tr>
-                                <th>Placeholder</th>
-                                <th>Placeholder</th>
-                                <th>Placeholder</th>
-                            </tr>
-                            <tr>
-                                <th>Placeholder</th>
-                                <th>Placeholder</th>
-                                <th>Placeholder</th>
-                            </tr>
-                            <tr>
-                                <th>Placeholder</th>
-                                <th>Placeholder</th>
-                                <th>Placeholder</th>
-                            </tr>
+                            {#each meals as meal}
+                                <tr>
+                                    <td>{meal.name}</td>
+                                    <td><span class="value">{meal.calories}</span></td>
+                                    <td><span class="value">{meal.protein}</span></td>
+                                    <td><span class="value">{meal.fat}</span></td>
+                                    <td><span class="value">{meal.carbohydrates}</span></td>
+                                </tr>
+                            {/each}
                         </tbody>
                     </table>
                 </div>

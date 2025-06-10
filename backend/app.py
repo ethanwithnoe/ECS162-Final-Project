@@ -1076,5 +1076,43 @@ def getUserFoods():
             foodList.append(jsonDoc)
     return jsonify({"result": 0, "foodList": foodList})
 
+@app.route("/api/getuserfoodsTD", methods=["GET"])
+def getUserFoodsTD():
+    #imports timezone library so we can check for PST vs UTC
+    from zoneinfo import ZoneInfo
+    pacific_tz = ZoneInfo("America/Los_Angeles")
+    # check that user is logged in
+    user = session.get("user")
+    if not user:
+        return jsonify({"result": 10})
+
+    #currentPST time
+    currentPST= datetime.now(pacific_tz)
+    #Gets the beginning/end of today
+    pstStart = currentPST.replace(hour=0, minute=0, second=0, microsecond=0)
+    pstEnd = pstStart + timedelta(days=1)
+    #Converts start/end to UTC for matching our UTC database
+    earliest = pstStart.astimezone(timezone.utc)
+    latest = pstEnd.astimezone(timezone.utc)
+
+    # get all foods logged by the user whithin the time of today
+    docs = mongo.searchDocument(DB_FOOD, COL_FOOD, {
+        "userid": user["email"],
+        "timestamp": {
+            "$gte": earliest.isoformat(),
+            "$lt": latest.isoformat()
+        }
+    })
+
+    foodList = []
+
+    # search through foods
+    for doc in docs:
+        jsonDoc = doc.copy()
+        # convert ObjectID to string
+        jsonDoc["_id"] = str(jsonDoc["_id"])
+        foodList.append(jsonDoc)
+    return jsonify({"result": 0, "foodList": foodList})
+
 
 # endregion Food Tracking
