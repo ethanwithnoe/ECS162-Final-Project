@@ -36,6 +36,8 @@
     today.setHours(0, 0, 0, 0);
 
     let filteredData:any = null;
+    let filteredProgress: any = null;
+    let progressData = [];
 
     // let filteredData = foodData
     //     .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()) // Sort by timestamp
@@ -104,7 +106,11 @@
     // MOCK SECTION FOR PROGRESS FILTERING
     let view: "today" | "lastWeek" | "lastMonth" = "today";
 
-    let progressData:any = null;
+    $: if (view) {
+        (async () => {
+            filteredProgress = await filterProgressData(view);
+        })();
+    }
 
     async function filterProgressData(view: string) {
         try {
@@ -150,8 +156,6 @@
             return progressData;
         }
     }
-
-    $: filteredProgress = null;//filterProgressData(view); // moved into onMount
 
     // END MOCK SECTION FOR PROGRESS FILTERING
 
@@ -331,19 +335,29 @@
         filteredProgress = await filterProgressData(view);
         fetchFriendsList();
     });
+
+    
+
+
+    onMount(async () => {
+        const res = await fetch("/api/getinfo");
+        const data = await res.json();
+        if (!data.email) {
+            window.location.href = "/";
+        } else {
+            userEmail = data.email;
+        }
+        await fetchInfo();
+        await loaddailyMeals();
+        setFriendsList();
+        getFoodLogs();
+        filteredProgress = await filterProgressData(view);
+        fetchFriendsList();
+    });
 </script>
 
 <div class="dashboard-container">
-    <!-- <button onclick={redirectToDashboard}>Dashboard</button>
-    <button onclick={redirectToMeals}>Meals</button>
-    <button onclick={redirectToGoals}>My Goals</button>
-    <button onclick={redirectToLogout}>Log Out</button> -->
-    <!-- <div class="logout">
-            <button onclick={redirectToLogout}> Logout </button>
-    </div> -->
-    <!-- <div class="goals-page">
-        <button onclick={redirectToGoals}> My Goals </button>
-    </div> -->
+
 
 
     <button class="toggle" onclick={toggleSidebar}>≡ Pages</button>
@@ -355,7 +369,6 @@
                     <li>Dashboard</li>
                     <li onclick={redirectToMeals}>My Meals</li>
                     <li onclick={redirectToGoals}>My Goals</li>
-                    <!-- <li onclick ={redirectToAddFood}></li> -->
                     <li onclick={redirectToLogout}>Logout</li>
                 </ul>
             </aside>
@@ -365,9 +378,9 @@
             <header>
                 <h1>My Dashboard</h1>
                 <div class="tabs">
-                    <button>Today</button>
-                    <button>This Week</button>
-                    <button>Last Month</button>
+                    <button onclick={() => view = "today"}>Today</button>
+                    <button onclick={() => view = "lastWeek"}>This Week</button>
+                    <button onclick={() => view = "lastMonth"}>Last Month</button>
                 </div>
             </header>
 
@@ -465,24 +478,27 @@
             </div>
         </div>
 
-        <div class="main-grid">
-            <div class="card large">
-                <h3>Today's Calories</h3>
-                {#if filteredData}
-                    <BarChart
-                        {filteredData}
-                        {goalValue}
-                        {buffer}
-                        height={200}
-                        width={300}
-                        selectedNutrient={selectedNutrient}
-                        startHour={6}
-                        endHour={23}
-                    />
-                {/if}
-            </div>
+            <div class="main-grid">
+                <!-- Bottom Row -->
+                <div class="card large">
+                    <div class="card-content">
+                    <h3>Today's Calories</h3>
+                        {#if filteredData}
+                            <BarChart
+                                {filteredData}
+                                {goalValue}
+                                {buffer}
+                                height={400}
+                                width={600}
+                                selectedNutrient={selectedNutrient}
+                                startHour={6}
+                                endHour={23}
+                            />
+                        {/if}
+                    </div>
+                </div>
 
-                <div class="card">
+                <div class="card flexible">
                     <h3>Your Meals so Far</h3>
                     <table>
                         <thead>
@@ -508,7 +524,7 @@
                     </table>
                 </div>
 
-                <div class="card">
+                <div class="card flexible">
                     <h3>My Friends</h3>
                     <input type="email" bind:value={searchEmail} placeholder="Enter Email" class="input-style">
                     <button onclick={addFriend}>Add</button>
@@ -517,22 +533,12 @@
                     {/if}
                     {#if friendList && friendList.length > 0}
                         <ul id="friendslist">
-                            <!-- <li>Name - email</li>
-                            <li>Name - email</li>
-                            <li>Name - email</li>
-                            <li>Name - email</li>
-                            <li>Name - email</li>
-                            <li>Name - email</li> -->
-                            
                             {#each friendList as [email, username]}
-                            
                                 <li class="friend-list">{email}</li>
                             {/each}
                         </ul>
                     {:else}
                         <p>Your Friends List is Empty.</p>
-                            
-                        
                     {/if}
                 </div>
 
@@ -556,116 +562,24 @@
 
         
 
-
-        <!-- <div class="top-controls">
-            
-        </div>
-        <input type="text" placeholder="Search...">
-        
-
-        <div class="main-grid">
-            <div class="card large">
-                <h3>Today's Calories</h3>
-                <div class="graph-placeholder">[Bar Graph]</div>
-            </div>
-
-            <div class="card-meals">
-                <h3>Add from My Meals</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Calories</th>
-                            <th>Protein</th>
-                        </tr>
-                    </thead>
-                    
-                    <tbody>
-                        <tr>
-                            <th>Placeholder</th>
-                            <th>Placeholder</th>
-                            <th>Placeholder</th>
-                        </tr>
-                        <tr>
-                            <th>Placeholder</th>
-                            <th>Placeholder</th>
-                            <th>Placeholder</th>
-                        </tr>
-                        <tr>
-                            <th>Placeholder</th>
-                            <th>Placeholder</th>
-                            <th>Placeholder</th>
-                        </tr>
-                        <tr>
-                            <th>Placeholder</th>
-                            <th>Placeholder</th>
-                            <th>Placeholder</th>
-                        </tr>
-                        <tr>
-                            <th>Placeholder</th>
-                            <th>Placeholder</th>
-                            <th>Placeholder</th>
-                        </tr>
-                        <tr>
-                            <th>Placeholder</th>
-                            <th>Placeholder</th>
-                            <th>Placeholder</th>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class=card>
-                <h3>My Friends</h3>
-                <ul id="friendslist">
-                    <li>Name - email</li>
-                    <li>Name - email</li>
-                    <li>Name - email</li>
-                    <li>Name - email</li>
-                    <li>Name - email</li>
-                    <li>Name - email</li>
-                </ul>
-            </div>
-            <div class="card large">
-                <h3>Today's Calories</h3>
-                <LineChart 
-                    {filteredData} 
-                    {goalValue} 
-                    {buffer} 
-                    height={400} 
-                    width={600} 
-                    selectedNutrient={selectedNutrient}
-                />
-            </div>
-        </div>
-    </div>
-</div> -->
-
 <style>
-    /* .dashboard-container {
-        padding: 2rem;
-        /* background-color: #fafafa;
-        /* background-color: #121212;
-        color: white;
-        font-family: sans-serif;
-    } */
-    .dashboard-container {
-        font-family: system-ui, sans-serif;
-        /* background-color: #121212; */
-        color: #fff;
-        min-height: 100vh;
-        padding: 1rem;
-    }
-    .toggle {
-        background: #1e1e1e;
-        border: none;
-        color: white;
-        padding: 0.5rem 1rem;
-        font-size: 1.1rem;
-        cursor: pointer;
-        border-radius: 6px;
-        margin-bottom: 1rem;
-    }
+.dashboard-container {
+    font-family: system-ui, sans-serif;
+    color: #fff;
+    min-height: 100vh;
+    padding: 1rem;
+}
+
+.toggle {
+    background: #1e1e1e;
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    font-size: 1.1rem;
+    cursor: pointer;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+}
 
     .layout {
         display: flex;
@@ -680,104 +594,152 @@
         min-height: 100vh;
     }
 
-    .sidebar ul {
-        list-style: none;
-        /* padding: 0; */
-    }
+.sidebar ul {
+    list-style: none;
+}
 
-    .sidebar li {
-        /* width: 100%; */
-        padding: 0.75rem;
-        cursor: pointer;
-        border-radius: 6px;
-    }
+.sidebar li {
+    padding: 0.75rem;
+    cursor: pointer;
+    border-radius: 6px;
+}
 
-    .sidebar li:hover, .sidebar li:active {
-        background-color: #2a2a2a;
-    }
+.sidebar li:hover, .sidebar li:active {
+    background-color: #2a2a2a;
+}
 
-    header {
-        display: flex;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        align-items: center;
-    }
+header {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+}
 
-    .tabs button {
-        margin-right: 0.5rem;
-        padding: 0.5rem 1rem;
-        font-weight: bold;
-        background-color: #121212;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-    }
+.tabs button {
+    margin-right: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-weight: bold;
+    background-color: #121212;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
 
-    .summary-cards {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 1rem;
-        margin-bottom: 2rem;
-        /* background-color: #121212; */
-    }
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);  /* 4 cards in the top row */
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
 
-    .card {
-        background-color: #121212; /*diff*/
-        padding: 1rem;
-        border-radius: 8px;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0, 0.4);
-    }
+.card {
+    background-color: #121212;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0, 0.4);
+}
 
-    .card h2, .card h3 {
-        margin-top: 0;
-    }
+.card h2, .card h3 {
+    margin-top: 0;
+}
 
-    .card p {
-        font-size: 1.5rem;
-        font-weight: bold;
-        margin: 0.5rem 0;
-    }
+.card p {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0.5rem 0;
+}
 
-    .card small {
-        color: #bbb;
-    }
+.card small {
+    color: #bbb;
+}
 
-    /* .card.large {
-        grid-column: span 2;
-    } */
+main {
+    width: 100%;
+}
 
-    main {
-        width: 100%;
-    }
+.main-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    grid-template-rows: auto auto;
+}
 
-    .main-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 1.5rem;
-    }
+.card.large {
+    grid-column: span 2;
+    text-align: center;
+    padding: 2rem;
+}
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        color: white;
-    }
+.card.large .card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
 
-    th, td {
-        text-align: left;
-        padding: 0.4rem;
-        border-bottom: 1px solid #333;
-    }
+.card.large h3 {
+    margin: 0;
+    padding-bottom: 1rem;
+    text-align: center;
+}
 
-    th {
-        background-color: #2a2a2a;
-        color: #ccc;
-    }
+.card.large svg {
+    height: 400px;
+    width: 100%;
+    object-fit: contain;
+}
 
-    ul {
-        list-style: none;
-        padding: 0;
-    }
+.card {
+    grid-column: span 1;
+}
+
+/* Position cards explicitly */
+.main-grid .card:nth-child(1) { /* Bar Graph */
+    grid-row: 1;
+}
+
+.main-grid .card:nth-child(2) { /* Meals */
+    grid-row: 1;
+}
+
+.main-grid .card:nth-child(3) { /* Friends */
+    grid-row: 2;
+}
+
+.main-grid .card:nth-child(4) { /* Line Graph */
+    grid-row: 2;
+}
+
+/* New styles to fix flexible width for Meals and Friends cards */
+.card.flexible {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    color: white;
+}
+
+th, td {
+    text-align: left;
+    padding: 0.4rem;
+    border-bottom: 1px solid #333;
+}
+
+th {
+    background-color: #2a2a2a;
+    color: #ccc;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
 
     .graph-placeholder {
         height: 200px;
@@ -810,4 +772,21 @@
         border-radius: 5px;
         color: white;
     }
+.graph-placeholder {
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #2a2a2a;
+    border-radius: 6px;
+    color: aaa;
+}
+
+.friend-list {
+    padding: 0.5rem;
+    background: #2a2a2a;
+    margin-bottom: 0.5rem;
+    border-radius: 5px;
+    color: white;
+}
 </style>
