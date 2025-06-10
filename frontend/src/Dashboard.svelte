@@ -321,35 +321,67 @@
             <div class="card">
                 <h3>Calories</h3>
                 <p>Current Progress: {userGoalProgress.calories}</p>
-                {#if filteredProgress}
-                    <ProgressChart
-                        filteredData={filteredProgress}
-                        {selectedNutrient}
-                        width={150}
-                        height={150}
-                    />
-                {/if}
+                <div class="ProgressChart">
+                    {#if filteredProgress}
+                        <ProgressChart
+                            filteredData={filteredProgress}
+                            selectedNutrient={"calories"}
+                            width={150}
+                            height={150}
+                        />
+                    {/if}
+                </div>
                 <small>Calorie Goal: {userGoals.calories}, just {userGoalProgress.caloriesleft} off!</small>
             </div>
 
-                <div class="card">
-                    <h3>Protein</h3>
-                    <p>Current Progress: {userGoalProgress.protein}</p>
-                    <small>Protein Goal: {userGoals.protein}, just {userGoalProgress.proteinleft} off!</small>
+            <div class="card">
+                <h3>Protein</h3>
+                <p>Current Progress: {userGoalProgress.protein}</p>
+                <div class="ProgressChart">
+                    {#if filteredProgress}
+                        <ProgressChart
+                            filteredData={filteredProgress}
+                            selectedNutrient={"protein"}
+                            width={150}
+                            height={150}
+                        />
+                    {/if}
                 </div>
-
-                <div class="card">
-                    <h3>Carbohydrates</h3>
-                    <p>Current Progress: {userGoalProgress.carbohydrates}</p>
-                    <small>Carbohydrate Goal: {userGoals.carbohydrates}, just {userGoalProgress.carbohydratesleft} off!</small>
-                </div>
-
-                <div class="card">
-                    <h3>Fat</h3>
-                    <p>Current Progress: {userGoalProgress.fat}</p>
-                    <small>Fat Goal: {userGoals.fat}, just {userGoalProgress.fatleft} off!</small>
-                </div>
+                <small>Protein Goal: {userGoals.protein}, just {userGoalProgress.proteinleft} off!</small>
             </div>
+
+            <div class="card">
+                <h3>Carbohydrates</h3>
+                <p>Current Progress: {userGoalProgress.carbohydrates}</p>
+                <div class="ProgressChart">
+                    {#if filteredProgress}
+                        <ProgressChart
+                            filteredData={filteredProgress}
+                            selectedNutrient={"carbohydrates"}
+                            width={150}
+                            height={150}
+                        />
+                    {/if}
+                </div>
+                <small>Carbohydrate Goal: {userGoals.carbohydrates}, just {userGoalProgress.carbohydratesleft} off!</small>
+            </div>
+
+            <div class="card">
+                <h3>Fat</h3>
+                <p>Current Progress: {userGoalProgress.fat}</p>
+                <div class="ProgressChart">
+                    {#if filteredProgress}
+                        <ProgressChart
+                            filteredData={filteredProgress}
+                            selectedNutrient={"fat"}
+                            width={150}
+                            height={150}
+                        />
+                    {/if}
+                </div>
+                <small>Fat Goal: {userGoals.fat}, just {userGoalProgress.fatleft} off!</small>
+            </div>
+        </div>
 
         <div class="main-grid">
             <div class="card large">
@@ -408,7 +440,16 @@
 
                 <div class="card large">
                     <h3>Today's Steps</h3>
-                    <div class="graph-placeholder">[Line Graph]</div>
+                    {#if filteredData}
+                        <LineChart
+                            {filteredData}
+                            {goalValue}
+                            {buffer}
+                            height={200}
+                            width={300}
+                            selectedNutrient={selectedNutrient}
+                        />
+                    {/if}
                 </div>
             </div>
         </main>
