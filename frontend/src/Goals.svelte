@@ -22,6 +22,7 @@
         BMR: 0,
         AMR: 0
     };
+    let Activity_number = 0;
     //Sets usergoals to 0 by default
     let userGoals = {
         calories: 0,
@@ -78,6 +79,19 @@
 
         }
 
+        // (S: 0, L: 1-3 Days | M: 3-5 Days | A: 6-7 Days | E: 6-7 Days )
+        if (Activity_number <= 0){
+            userStats.Activity = "S";
+        } else if (Activity_number <= 3){
+            userStats.Activity = "L";
+        } else if (Activity_number <= 5){
+            userStats.Activity = "M";
+        } else if (Activity_number <= 7){
+            userStats.Activity = "A";
+        } else if (Activity_number > 7){
+            userStats.Activity = "E";
+        }
+
         //Calculates AMR based on activity status using different multipliers
         if(userStats.Activity === "S" || userStats.Activity === "s") {
             userStats.AMR = userStats.BMR * 1.2;
@@ -102,7 +116,8 @@
         userGoals.carbohydrates = Math.round((0.45*userGoals.calories) / 4);
         userGoals.fat = Math.round((0.20*userGoals.calories) / 9);
 
-        submitGoals();
+        // It shouldn't submit here
+        // submitGoals();
     }
     
     
@@ -190,8 +205,8 @@
                     </tr>
                     <!--Input Activity info that is case-insensitive using regex-->
                     <tr>
-                        <td>Days of Exercise per Week (S: 0, L: 1-3 Days | M: 3-5 Days | A: 6-7 Days | E: 6-7 Days )</td>
-                        <td><input type="text" bind:value={userStats.Activity} pattern="^(S|s|L|l|M|m|A|a|E|e)$" /></td>
+                        <td>Days of Exercise per Week </td>
+                        <td><input type="number" bind:value={Activity_number} /></td>
                     </tr>
                 </tbody>
             </table>
