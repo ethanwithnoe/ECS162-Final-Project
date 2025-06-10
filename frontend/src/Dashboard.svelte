@@ -38,7 +38,7 @@
     let filteredData:any = null;
     let filteredProgress: any = null;
     let progressData = [];
-
+    let foodData: Meal[] = [];
     // let filteredData = foodData
     //     .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()) // Sort by timestamp
     //     .map(meal => ({
@@ -70,7 +70,7 @@
         try {
             const res = await fetch(`/api/getuserfoods?range=${encodeURIComponent("")}`);
             const data = await res.json();
-            const foodData = data.foodList;
+            foodData = data.foodList;
 
             console.log(foodData);
 
@@ -99,7 +99,6 @@
 
         
     }
-    let goalValue = 2000;
     let buffer = 10;
     //END MOCK SECTION FOR LINE/BAR
 
@@ -111,6 +110,37 @@
             filteredProgress = await filterProgressData(view);
         })();
     }
+    $: goalValue = (() => {
+        if(selectedNutrient == "calories") {
+            return userGoals.calories
+        }
+        if(selectedNutrient == "protein") {
+            return userGoals.protein
+        }
+        if(selectedNutrient == "fat") {
+            return userGoals.fat
+        }
+        if(selectedNutrient == "carbohydrates") {
+            return userGoals.carbohydrates
+        }
+        else {
+            return 0;
+        }
+    })();
+    $: if (foodData && selectedNutrient) {
+        filteredData = foodData
+            .filter(meal => {
+                const mealDate = new Date(meal.timestamp);
+                mealDate.setHours(0,0,0,0);
+                return mealDate.getTime() === today.getTime(); 
+            })
+            .sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
+            .map(meal => ({
+                timestamp: meal.timestamp,
+                nutrientValue: meal[selectedNutrient as keyof Meal] as number,
+            }))
+    }       
+
 
     async function filterProgressData(view: string) {
         try {
@@ -319,7 +349,6 @@
         searchEmail = "";
     }
 
-
     onMount(async () => {
         const res = await fetch("/api/getinfo");
         const data = await res.json();
@@ -359,6 +388,23 @@
                     <button onclick={() => view = "today"}>Today</button>
                     <button onclick={() => view = "lastWeek"}>This Week</button>
                     <button onclick={() => view = "lastMonth"}>Last Month</button>
+                    
+                    <button onclick={() => {
+                        selectedNutrient = "calories";
+                        goalValue = userGoals.calories
+                    }}>Calorie Chart</button>                     
+                    <button onclick={() => {
+                        selectedNutrient = "protein";
+                        goalValue = userGoals.protein
+                    }}>Protein Chart</button>                     
+                    <button onclick={() => {
+                        selectedNutrient = "fat";
+                        goalValue = userGoals.fat
+                    }}>Fat Chart</button>    
+                    <button onclick={() => {
+                        selectedNutrient = "carbohydrates";
+                        goalValue = userGoals.carbohydrates
+                    }}>Carb Chart</button>                    
                 </div>
             </header>
 
@@ -512,17 +558,19 @@
 </div>
 
 <style>
+    /* Attempt at swapping color schemes to the figma, cleaning simple comments, only keeping new ones*/
 .dashboard-container {
-    font-family: system-ui, sans-serif;
-    color: #fff;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #000;
     min-height: 100vh;
     padding: 1rem;
+    background-color: white;
 }
 
 .toggle {
-    background: #1e1e1e;
-    border: none;
-    color: white;
+    background: white;
+    border: 1px solid #ddd;
+    color: black;
     padding: 0.5rem 1rem;
     font-size: 1.1rem;
     cursor: pointer;
@@ -537,10 +585,11 @@
 
 .sidebar {
     min-width: 180px;
-    background-color: #1e1e1e;
+    background-color: white;
     border-radius: 8px;
     padding: 1rem;
     min-height: 100vh;
+    border: 1px solid #ddd;
 }
 
 .sidebar ul {
@@ -554,7 +603,7 @@
 }
 
 .sidebar li:hover, .sidebar li:active {
-    background-color: #2a2a2a;
+    background-color: #f1f1f1;
 }
 
 header {
@@ -568,39 +617,42 @@ header {
     margin-right: 0.5rem;
     padding: 0.5rem 1rem;
     font-weight: bold;
-    background-color: #121212;
-    color: white;
-    border: none;
+    background-color: white;
+    color: black;
+    border: 1px solid #ddd;
     border-radius: 6px;
     cursor: pointer;
 }
 
 .summary-cards {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);  /* 4 cards in the top row */
+    grid-template-columns: repeat(4, 1fr);
     gap: 1rem;
     margin-bottom: 2rem;
 }
 
 .card {
-    background-color: #121212;
+    background-color: white;
     padding: 1rem;
     border-radius: 8px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0, 0.4);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
 }
 
 .card h2, .card h3 {
     margin-top: 0;
+    color: black;
 }
 
 .card p {
     font-size: 1.5rem;
     font-weight: bold;
     margin: 0.5rem 0;
+    color: black;
 }
 
 .card small {
-    color: #bbb;
+    color: #333;
 }
 
 main {
@@ -632,6 +684,7 @@ main {
     margin: 0;
     padding-bottom: 1rem;
     text-align: center;
+    color: black;
 }
 
 .card.large svg {
@@ -644,7 +697,7 @@ main {
     grid-column: span 1;
 }
 
-/* Position cards explicitly */
+/* Position cards explicitly because formatting sucked*/
 .main-grid .card:nth-child(1) { /* Bar Graph */
     grid-row: 1;
 }
@@ -661,7 +714,6 @@ main {
     grid-row: 2;
 }
 
-/* New styles to fix flexible width for Meals and Friends cards */
 .card.flexible {
     width: 100% !important;
     max-width: 100% !important;
@@ -671,18 +723,18 @@ main {
 table {
     width: 100%;
     border-collapse: collapse;
-    color: white;
+    color: black;
 }
 
 th, td {
     text-align: left;
     padding: 0.4rem;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid #ddd;
 }
 
 th {
-    background-color: #2a2a2a;
-    color: #ccc;
+    background-color: #f9f9f9;
+    color: #333;
 }
 
 ul {
@@ -690,21 +742,53 @@ ul {
     padding: 0;
 }
 
-.graph-placeholder {
+.graph-placeholder { /* Legit no idea if this is being used still, can we delete?*/
     height: 200px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #2a2a2a;
+    background-color: #f1f1f1;
     border-radius: 6px;
-    color: aaa;
+    color: #333;
 }
 
 .friend-list {
     padding: 0.5rem;
-    background: #2a2a2a;
+    background: #f1f1f1; 
     margin-bottom: 0.5rem;
     border-radius: 5px;
-    color: white;
+    color: black;
+}
+
+/* Styling for search bar in My Friends */
+.card.flexible .input-style {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    background-color: #fff;
+    color: black;
+    /* We didn't have explicit styling before for the size, etc*/
+    max-width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Styling for button in My Friends */
+.card.flexible button {
+    background: white;
+    border: 1px solid #ddd;
+    color: black;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.card.flexible button:hover {
+    background-color: #f1f1f1;
 }
 </style>

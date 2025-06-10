@@ -266,17 +266,17 @@
         align-items: center;
     }
     .container {
-        font-family: system-ui, sans-serif;
-        /* background-color: #121212; */
-        color: #fff;
+        font-family: 'Inter', system-ui, sans-serif;
+        background-color: white;
+        color: black;
         min-height: 100vh;
         padding: 1rem;
     }
 
     .toggle {
-        background: #1e1e1e;
-        border: none;
-        color: white;
+        background: white;
+        border: 1px solid #ddd;
+        color: black;
         padding: 0.5rem 1rem;
         font-size: 1.1rem;
         cursor: pointer;
@@ -291,10 +291,11 @@
 
     .sidebar {
         min-width: 180px;
-        background-color: #1e1e1e;
+        background-color: white;
         border-radius: 8px;
         padding: 1rem;
         min-height: 100vh;
+        border: 1px solid #ddd;
     }
 
     .sidebar ul {
@@ -310,7 +311,7 @@
     }
 
     .sidebar li:hover, .sidebar li:active {
-        background-color: #2a2a2a;
+        background-color: #f1f1f1;
     }
 
     .content {
@@ -320,30 +321,63 @@
     .content h1 {
         font-size: 1.8rem;
         margin-bottom: 1rem;
+        color: black;
     }
-
 
     table {
         width: 100%;
         border-collapse: collapse;
-        background-color: #1e1e1e;
+        background-color: white;
         border-radius: 8px;
         padding: 10px;
         margin-top: 10px;
         margin-bottom: 10px;
+        border: 1px solid #ddd;
+        color: black;
     }
 
     th,td {
         padding: 0.74rem;
         text-align: left;
-        border-bottom: 1px solid #333;
+        border-bottom: 1px solid #ddd;
     }
 
     .value {
-        background: #2a2a2a;
+        background: #f1f1f1;
         padding: 0.3rem 0.75rem;
         border-radius: 999px;
         font-size: 0.9rem;
-        color: #ddd;
+        color: black;
     }
+
+    /* Untouched elements in previous bleh color scheme */
+
+    input[type="number"],
+    input[type="text"] {
+        width: 100%;
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        background-color: white;
+        color: black;
+        box-sizing: border-box;
+        max-width: 350px;
+    }
+
+    button {
+        background: white;
+        border: 1px solid #ddd;
+        color: black;
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        cursor: pointer;
+        border-radius: 6px;
+        transition: background-color 0.2s ease;
+    }
+
+    button:hover {
+        background-color: #f1f1f1;
+    }
+    
 </style>
