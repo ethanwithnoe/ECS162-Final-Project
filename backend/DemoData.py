@@ -44,14 +44,18 @@ def addSampleFoods(
     DB_FOOD: str,
     COL_FOOD: str,
     userEmail: str,
+    year: int,
     month: int,
     day: int,
 ):
     def toStr(num: int):
         return str(num).zfill(2)
 
-    todayStr = f"2025-{toStr(month)}-{toStr(day)}"
-    lastMonth = f"2025-{toStr(month-1)}-{toStr(day)}"
+    todayStr = f"{year}-{toStr(month)}-{toStr(day)}"
+    if month == 1:
+        lastMonth = f"{year-1}-{toStr(12)}-{toStr(day)}"
+    else:
+        lastMonth = f"{year}-{toStr(month-1)}-{toStr(day)}"
 
     data = [
         {
@@ -421,13 +425,14 @@ def addSampleGoals(
     DB_USERS: str,
     COL_GOALS: str,
     userEmail: str,
+    year: int,
     month: int,
     day: int,
 ):
     def toStr(num: int):
         return str(num).zfill(2)
 
-    todayStr = f"2025-{toStr(month)}-{toStr(day)}"
+    todayStr = f"{year}-{toStr(month)}-{toStr(day)}"
     data = [
         {
             # "_id": "68492a1b579b4a8baea8e9c8",
@@ -474,7 +479,10 @@ def generateSampleData(
     COL_GOALS: str,
     COL_RECORD: str,
 ):
+    # account to add sample data to
     userEmail = "moderator@hw3.com"
+    # date to center the data around.
+    year = 2025
     month = 6
     day = 11
 
@@ -484,6 +492,7 @@ def generateSampleData(
         DB_FOOD=DB_FOOD,
         COL_FOOD=COL_FOOD,
         userEmail=userEmail,
+        year=year,
         month=month,
         day=day,
     )
@@ -498,6 +507,7 @@ def generateSampleData(
         DB_USERS=DB_USERS,
         COL_GOALS=COL_GOALS,
         userEmail=userEmail,
+        year=year,
         month=month,
         day=day,
     )

@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import Home from './Home.svelte';
-  import Dashboard from './Dashboard.svelte';
-  import Meals from './Meals.svelte';
-  import Goals from './Goals.svelte';
+  import { onMount } from "svelte";
+  import Home from "./Home.svelte";
+  import Dashboard from "./Dashboard.svelte";
+  import Meals from "./Meals.svelte";
+  import Goals from "./Goals.svelte";
 
   let currentPath = window.location.pathname;
   let loggedIn = false;
@@ -12,17 +12,17 @@
     const data = await res.json();
     loggedIn = !!data.email;
 
-    if(currentPath === "/dashboard" && !loggedIn){
-      window.location.href = '/';
+    if (currentPath === "/dashboard" && !loggedIn) {
+      window.location.href = "/";
     }
   });
 </script>
 
-{#if currentPath === '/dashboard' && loggedIn}
+{#if currentPath === "/dashboard" && loggedIn}
   <Dashboard />
-{:else if currentPath === '/meals' && loggedIn}
+{:else if currentPath === "/meals" && loggedIn}
   <Meals />
-{:else if currentPath === '/goals' && loggedIn}
+{:else if currentPath === "/goals" && loggedIn}
   <Goals />
 {:else}
   <Home />

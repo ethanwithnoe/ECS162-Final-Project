@@ -1,5 +1,5 @@
 <script lang="ts">
-    import  AddFood  from "./AddFood.svelte";
+    import AddFood from "./AddFood.svelte";
     import { onMount } from "svelte";
     import Logo from "../assets/Logo.png";
     //   import Dashboard from './Dashboard.svelte';
@@ -74,7 +74,9 @@
     }
     async function getFoodList() {
         try {
-            const res = await fetch(`/api/getuserfoods?range=${encodeURIComponent("custom")}&earliest=${encodeURIComponent("2025-05-09")}`);
+            const res = await fetch(
+                `/api/getuserfoods?range=${encodeURIComponent("custom")}&earliest=${encodeURIComponent("2025-05-09")}`,
+            );
             // console.log(res);
             const data = await res.json();
             console.log(data);
@@ -111,10 +113,12 @@
 
 <main>
     <div class="home-container">
-        <img src={Logo} alt="Logo" class="logo" /> 
+        <img src={Logo} alt="Logo" class="logo" />
         <h1 class="title">Opter Meal Tracker</h1>
         <h2 class="subtitle">Opt into a healthier life style</h2>
-        <h3 class="login-prompt">Please <span onclick={redirectToLogin}> Login </span> to Continue.</h3>
+        <h3 class="login-prompt">
+            Please <span onclick={redirectToLogin}> Login </span> to Continue.
+        </h3>
         <!-- <div class="button-row">
             <button onclick={redirectToLogin}> TESTBUTTON LOGIN </button>
             <button onclick={redirectToLogout}> TESTBUTTON LOGOUT </button>
@@ -138,7 +142,7 @@
 </main>
 
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
 
     .home-container {
         display: flex;
@@ -151,10 +155,10 @@
         color: #000; /* black text */
         text-align: center;
         overflow: hidden;
-        font-family: 'Inter', sans-serif;
+        font-family: "Inter", sans-serif;
     }
 
-    .logo { 
+    .logo {
         width: 250px;
     }
 

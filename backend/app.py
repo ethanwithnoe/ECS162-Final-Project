@@ -83,7 +83,8 @@ COL_USERS = "users"
 COL_GOALS = "goals"
 COL_RECORD = "records"
 
-
+# Generate sample data.
+# The specific of the data can be changed in DemoData.py
 DemoData.generateSampleData(
     mongo=mongo,
     DB_USERS=DB_USERS,
@@ -93,8 +94,8 @@ DemoData.generateSampleData(
     COL_GOALS=COL_GOALS,
     COL_RECORD=COL_RECORD,
 )
-# region Dex
 
+# region Dex
 
 @app.route("/login")
 def login():
@@ -146,14 +147,8 @@ def logout():
 # endregion Dex
 
 
-
-
-# I have no idea why the dev version requires every fetch/route to start with "/api".
-# The production version seemed to work fine without it.
-
-
 # Route to get the current session's user info
-# currently just returns email, but more might be added later
+# Used for debug purposes
 @app.route("/api/getinfo")
 def getInfo():
     debug_out("getInfo")
@@ -421,6 +416,7 @@ def search():
     data = response.json()
     return jsonify(data), 200
 
+
 @app.route("/api/deletefood", methods=["POST"])
 def deleteFood():
     user = session.get("user")
@@ -429,7 +425,7 @@ def deleteFood():
     food_id = request.form.get("food_id")
     if not food_id:
         return jsonify({"result": 11})
-    
+
     collection = mongo.client[DB_FOOD][COL_FOOD]
     result = collection.delete_one({"_id": ObjectId(food_id), "userid": user["email"]})
 
@@ -437,6 +433,7 @@ def deleteFood():
         return jsonify({"result": 0})
     else:
         return jsonify({"result": 12})
+
 
 @app.route("/api/addfood", methods=["POST"])
 def addfood():
@@ -651,33 +648,36 @@ def getUserFoods():
         foodList.append(jsonDoc)
     return jsonify({"result": 0, "foodList": foodList})
 
+
 @app.route("/api/getuserfoodsTD", methods=["GET"])
 def getUserFoodsTD():
-    #imports timezone library so we can check for PST vs UTC
+    # imports timezone library so we can check for PST vs UTC
     from zoneinfo import ZoneInfo
+
     pacific_tz = ZoneInfo("America/Los_Angeles")
     # check that user is logged in
     user = session.get("user")
     if not user:
         return jsonify({"result": 10})
 
-    #currentPST time
-    currentPST= datetime.now(pacific_tz)
-    #Gets the beginning/end of today
+    # currentPST time
+    currentPST = datetime.now(pacific_tz)
+    # Gets the beginning/end of today
     pstStart = currentPST.replace(hour=0, minute=0, second=0, microsecond=0)
     pstEnd = pstStart + timedelta(days=1)
-    #Converts start/end to UTC for matching our UTC database
+    # Converts start/end to UTC for matching our UTC database
     earliest = pstStart.astimezone(timezone.utc)
     latest = pstEnd.astimezone(timezone.utc)
 
     # get all foods logged by the user whithin the time of today
-    docs = mongo.searchDocument(DB_FOOD, COL_FOOD, {
-        "userid": user["email"],
-        "timestamp": {
-            "$gte": earliest.isoformat(),
-            "$lt": latest.isoformat()
-        }
-    })
+    docs = mongo.searchDocument(
+        DB_FOOD,
+        COL_FOOD,
+        {
+            "userid": user["email"],
+            "timestamp": {"$gte": earliest.isoformat(), "$lt": latest.isoformat()},
+        },
+    )
 
     foodList = []
 
