@@ -140,104 +140,147 @@
     </div>
 </div>
 
-<style>
-    .container {
-        font-family: system-ui, sans-serif;
-        /* background-color: #121212; */
-        color: #fff;
-        min-height: 100vh;
-        padding: 1rem;
-    }
+<style> /* Redoing the color scheme to match the Figma */
+.container {
+    font-family: 'Inter', system-ui, sans-serif;
+    color: black;
+    background-color: white;
+    min-height: 100vh;
+    padding: 1rem;
+}
 
-    .toggle {
-        background: #1e1e1e;
-        border: none;
-        color: white;
-        padding: 0.5rem 1rem;
-        font-size: 1.1rem;
-        cursor: pointer;
-        border-radius: 6px;
-        margin-bottom: 1rem;
-    }
+.toggle {
+    background: white;
+    border: 1px solid #ddd;
+    color: black;
+    padding: 0.5rem 1rem;
+    font-size: 1.1rem;
+    cursor: pointer;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+}
 
-    .layout {
-        display: flex;
-        gap: 1rem;
-    }
+.layout {
+    display: flex;
+    gap: 1rem;
+}
 
-    .sidebar {
-        min-width: 180px;
-        background-color: #1e1e1e;
-        border-radius: 8px;
-        padding: 1rem;
-        min-height: 100vh;
-    }
+.sidebar {
+    min-width: 180px;
+    background-color: white;
+    border-radius: 8px;
+    padding: 1rem;
+    min-height: 100vh;
+    border: 1px solid #ddd;
+}
 
-    .sidebar ul {
-        list-style: none;
-        padding: 0;
-    }
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
 
-    .sidebar li {
-        /* width: 100%; */
-        padding: 0.75rem;
-        cursor: pointer;
-        border-radius: 6px;
-    }
+.sidebar li {
+    padding: 0.75rem;
+    cursor: pointer;
+    border-radius: 6px;
+}
 
-    .sidebar li:hover, .sidebar li:active {
-        background-color: #2a2a2a;
-    }
+.sidebar li:hover, .sidebar li:active {
+    background-color: #f1f1f1;
+}
 
-    .content {
-        flex: 1;
-    }
+.content {
+    flex: 1;
+}
 
-    .content h1 {
-        font-size: 1.8rem;
-        margin-bottom: 1rem;
-    }
+.content h1 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: black;
+}
 
-    .search-filter {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 1rem;
-    }
+.search-filter {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
 
-    .search-filter input {
-        flex: 1;
-        padding: 0.5rem;
-        background-color: #2a2a2a;
-    }
+.search-filter input {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    background-color: white;
+    color: black;
+}
 
-    .search-filter button {
-        background-color: #2a2a2a;
-        color: white;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
-        cursor: pointer;
-    }
+.search-filter button {
+    background-color: white;
+    color: black;
+    border: 1px solid #ddd;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        background-color: #1e1e1e;
-        border-radius: 8px;
-    }
+.search-filter button:hover {
+    background-color: #f1f1f1;
+}
 
-    th,td {
-        padding: 0.74rem;
-        text-align: left;
-        border-bottom: 1px solid #333;
-    }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
 
-    .value {
-        background: #2a2a2a;
-        padding: 0.3rem 0.75rem;
-        border-radius: 999px;
-        font-size: 0.9rem;
-        color: #ddd;
-    }
+th, td {
+    padding: 0.74rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    color: black;
+}
+
+th {
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+.value {
+    background: #f1f1f1;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    color: black;
+}
+
+/* Search bar and buttons inside food search menu */
+.search-filter input {
+    background-color: white;
+    color: black;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    flex: 1;
+}
+
+.search-filter button {
+    background-color: white;
+    color: black;
+    border: 1px solid #ddd;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.search-filter button:hover {
+    background-color: #f1f1f1;
+}
 
 </style>
