@@ -7,21 +7,15 @@ def addDexUsers(mongo: MongoWrapper, DB_USERS:str, COL_USERS:str):
     users = [
         {
             "email": "admin@hw3.com",
-            "hash": "$2b$10$8NoCpIs/Z6v0s/pU9YxYIO10uWyhIVOS2kmNac9AD0HsqRhP5dUie",  # password = "password"
             "username": "admin",
-            "userID": "123",
         },
         {
             "email": "moderator@hw3.com",
-            "hash": "$2b$12$2aaoZyVjMWvoCq.DmCUECOGoW0oaBCyzSluUm3BpLrP26sVT71PSC",  # password = "mpassword"
             "username": "moderator",
-            "userID": "456",
         },
         {
             "email": "user@hw3.com",
-            "hash": "$2b$12$321HomfT164U9f5l.xQaYuHThGCss8PRPNy8t./tq8Frgr6UYeEka",  # password = "upassword"
             "username": "user",
-            "userID": "789",
         },
     ]
     for user in users:
@@ -30,7 +24,6 @@ def addDexUsers(mongo: MongoWrapper, DB_USERS:str, COL_USERS:str):
             COL_USERS,
             {
                 "email": user["email"],
-                # "userID": user["userID"],
             },
         )
         if not find:
@@ -40,7 +33,6 @@ def addDexUsers(mongo: MongoWrapper, DB_USERS:str, COL_USERS:str):
                 {
                     "email": user["email"],
                     "username": user["username"],
-                    "userID": user["userID"],
                     "friends": [],
                 },
             )
