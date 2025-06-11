@@ -7,6 +7,8 @@
     let meals = [];
     let error = "";
 
+    let searchFood = "";
+
     async function loadMeals() {
         try {
             const res = await fetch("/api/getuserfoods", {credentials: "include"});
@@ -21,6 +23,34 @@
             console.log(error);
         }
     }
+
+    async function repeatFood(meal: any) {
+        try {
+            const foodData = {
+                name: meal.name,
+                brand: meal.brand || "",
+                calories: meal.calories,
+                protein: meal.protein,
+                fat: meal.fat,
+                carbohydrates: meal.carbohydrates,
+            };
+
+            const res = await fetch("/api/addfood", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(foodData),});
+            const data = await res.json();
+            if (res.ok){
+                console.log("Food added again:", data);
+                await loadMeals();
+            } else {
+                console.error("Failed to re-add food:", data);
+            }
+        } catch(err) {
+            console.error("Error adding food:", data);
+        }
+    }
+
+    $: filteredMeals = meals.filter(meal =>
+        meal.name.toLowerCase().includes(searchFood.toLowerCase())
+    );
     onMount(() => {
         loadMeals();
     })
@@ -78,7 +108,7 @@
         <main class="content">
             <h1>My Meals</h1>
             <div class="search-filter">
-                <input placeholder="Search..."/>
+                <input placeholder="Search Meals..." bind:value={searchFood}/>
                 <button>Filter</button>
                 <button onclick={toggleAddFood}> + </button>
             </div>
@@ -95,16 +125,18 @@
                         <th>Protein (g)</th>
                         <th>Fat (g)</th>
                         <th>Carbohydrates (g)</th>
+                        <th>Re-add Food</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {#each meals as meal}
+                    {#each filteredMeals as meal}
                         <tr>
                             <td>{meal.name}</td>
                             <td><span class="value">{meal.calories}</span></td>
                             <td><span class="value">{meal.protein}</span></td>
                             <td><span class="value">{meal.fat}</span></td>
                             <td><span class="value">{meal.carbohydrates}</span></td>
+                            <td><button onclick={() => repeatFood(meal)}>+</button></td>
                         </tr>
                     {/each}
                 </tbody>
