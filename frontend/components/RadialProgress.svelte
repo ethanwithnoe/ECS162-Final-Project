@@ -51,8 +51,8 @@
         svgSelection.selectAll('*').remove();
 
         const chartGroup = svgSelection
-        .append('g')
-        .attr('transform', `translate(${margin.left + innerWidth / 2}, ${margin.top + innerHeight / 2})`);
+            .append('g')
+            .attr('transform', `translate(${margin.left + innerWidth / 2}, ${margin.top + innerHeight / 2})`);
 
         const totalDays = filteredData.length;
         const achievedDays = filteredData.filter(d => d[selectedNutrient]).length;
@@ -72,23 +72,23 @@
 
         // Scale from 0 to totalDays mapped to 0 to 2π radians
         const angleScale = d3.scaleLinear()
-        .domain([0, totalDays])
-        .range([0, 2 * Math.PI])
-        .clamp(true);
+            .domain([0, totalDays])
+            .range([0, 2 * Math.PI])
+            .clamp(true);
 
         // Background full circle arc (light gray)
         const arcBackground = d3.arc()
-        .innerRadius(radius - thickness)
-        .outerRadius(radius)
-        .startAngle(0)
-        .endAngle(2 * Math.PI);
+            .innerRadius(radius - thickness)
+            .outerRadius(radius)
+            .startAngle(0)
+            .endAngle(2 * Math.PI);
 
         // Foreground arc for achieved days
         const arcForeground = d3.arc()
-        .innerRadius(radius - thickness)
-        .outerRadius(radius)
-        .startAngle(0)
-        .endAngle(angleScale(achievedDays));
+            .innerRadius(radius - thickness)
+            .outerRadius(radius)
+            .startAngle(0)
+            .endAngle(angleScale(achievedDays));
 
         // Draw background arc
         chartGroup.append('path')

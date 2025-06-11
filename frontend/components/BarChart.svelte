@@ -64,8 +64,8 @@
         svgSelection.selectAll('*').remove();
 
         const chartGroup = svgSelection
-        .append('g')
-        .attr('transform', `translate(${margin.left}, ${margin.top})`);
+            .append('g')
+            .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
         const hourBins = d3.range(startHour, endHour + 1);
         const binned = new Map<number, number>();
@@ -73,102 +73,104 @@
         for (let hour of hourBins) binned.set(hour, 0);
 
         for (let d of filteredData) {
+
         const hour = new Date(d.timestamp).getHours();
-        if (hour >= startHour && hour <= endHour) {
-            for (let h = hour; h <= endHour; h++) {
-            binned.set(h, (binned.get(h) ?? 0) + d.nutrientValue);
+
+            if (hour >= startHour && hour <= endHour) {
+                for (let h = hour; h <= endHour; h++) {
+                binned.set(h, (binned.get(h) ?? 0) + d.nutrientValue);
+                }
             }
-        }
         }
 
         const data = hourBins.map(hour => ({
-        hour,
-        cumulative: binned.get(hour) ?? 0
+            hour,
+            cumulative: binned.get(hour) ?? 0
         }));
 
         const xScale = d3.scaleBand()
-        .domain(data.map(d => d.hour.toString()))
-        .range([0, innerWidth])
-        .padding(0.1);
+            .domain(data.map(d => d.hour.toString()))
+            .range([0, innerWidth])
+            .padding(0.1);
 
         const maxY = Math.max(
-        d3.max(data, d => d.cumulative) ?? 0,
-        goalValue * (1 + buffer / 100)
+            d3.max(data, d => d.cumulative) ?? 0,
+            goalValue * (1 + buffer / 100)
         );
 
         const yScale = d3.scaleLinear()
-        .domain([0, maxY])
-        .range([innerHeight, 0]);
+            .domain([0, maxY])
+            .range([innerHeight, 0]);
 
         chartGroup.append('g')
-        .attr('transform', `translate(0, ${innerHeight})`)
-        .call(d3.axisBottom(xScale).tickFormat(d => `${+d % 12 || 12}${+d < 12 ? 'AM' : 'PM'}`)) // removed space here
-        .call(g => g.selectAll('.tick line').remove())
-        .call(g => g.select('.domain').remove())
-        .selectAll('.tick text')
-        .style('fill', 'black');
+            .attr('transform', `translate(0, ${innerHeight})`)
+            .call(d3.axisBottom(xScale).tickFormat(d => `${+d % 12 || 12}${+d < 12 ? 'AM' : 'PM'}`)) // removed space here
+            .call(g => g.selectAll('.tick line').remove())
+            .call(g => g.select('.domain').remove())
+            .selectAll('.tick text')
+            .style('fill', 'black');
 
         chartGroup.append("g")
-        .call(d3.axisLeft(yScale).tickSize(-innerWidth).tickFormat(() => ""))
-        .selectAll("line")
-        .attr("stroke", "#eee");
+            .call(d3.axisLeft(yScale).tickSize(-innerWidth).tickFormat(() => ""))
+            .selectAll("line")
+            .attr("stroke", "#eee");
 
         chartGroup.append('g')
-        .call(d3.axisLeft(yScale))
-        .call(g => g.select('.domain').attr("stroke", "#eee"))
-        .call(g => g.selectAll('.tick line').remove())
-        .selectAll("text")
-        .style("fill", "black");
+            .call(d3.axisLeft(yScale))
+            .call(g => g.select('.domain').attr("stroke", "#eee"))
+            .call(g => g.selectAll('.tick line').remove())
+            .selectAll("text")
+            .style("fill", "black");
 
         // MAIN bars with rounded top edges only
         chartGroup.selectAll('.bar')
-        .data(data)
-        .enter()
-        .append('rect')
-        .attr('class', 'bar')
-        .attr('x', d => xScale(d.hour.toString())!)
-        .attr('y', d => yScale(d.cumulative))
-        .attr('width', xScale.bandwidth())
-        .attr('height', d => innerHeight - yScale(d.cumulative))
-        .attr('fill', 'black')
-        .attr('rx', 3) // rounds all corners
-        .attr('ry', 3);
+            .data(data)
+            .enter()
+            .append('rect')
+            .attr('class', 'bar')
+            .attr('x', d => xScale(d.hour.toString())!)
+            .attr('y', d => yScale(d.cumulative))
+            .attr('width', xScale.bandwidth())
+            .attr('height', d => innerHeight - yScale(d.cumulative))
+            .attr('fill', 'black')
+            .attr('rx', 3) // rounds all corners
+            .attr('ry', 3);
 
         // OVERLAY rectangles at bottom to mask rounded corners, *STYLE!*
         // ONLY for bars where cumulative > 0 to avoid overlay on empty bars
         chartGroup.selectAll('.bar-overlay')
-        .data(data.filter(d => d.cumulative > 0))       // <-- filter here to skip zero bars
-        .enter()
-        .append('rect')
-        .attr('class', 'bar-overlay')
-        .attr('x', d => xScale(d.hour.toString())!)
-        .attr('y', innerHeight - 6)                     // height of overlay is 6px, placed at bottom of main bars
-        .attr('width', xScale.bandwidth())
-        .attr('height', 6)                              // same as rx radius, covers bottom rounded corners
-        .attr('fill', 'black');
+            .data(data.filter(d => d.cumulative > 0))       // <-- filter here to skip zero bars
+            .enter()
+            .append('rect')
+            .attr('class', 'bar-overlay')
+            .attr('x', d => xScale(d.hour.toString())!)
+            .attr('y', innerHeight - 6)                     // height of overlay is 6px, placed at bottom of main bars
+            .attr('width', xScale.bandwidth())
+            .attr('height', 6)                              // same as rx radius, covers bottom rounded corners
+            .attr('fill', 'black');
 
         chartGroup.append('line')
-        .attr('x1', 0)
-        .attr('x2', innerWidth)
-        .attr('y1', yScale(goalValue))
-        .attr('y2', yScale(goalValue))
-        .attr('stroke', selectedNutrient.toLowerCase() === 'fat' ? 'red' : '#07c')
-        .attr('stroke-width', 2);
+            .attr('x1', 0)
+            .attr('x2', innerWidth)
+            .attr('y1', yScale(goalValue))
+            .attr('y2', yScale(goalValue))
+            .attr('stroke', selectedNutrient.toLowerCase() === 'fat' ? 'red' : '#07c')
+            .attr('stroke-width', 2);
 
         svgSelection.append('text')
-        .attr('x', width / 2)
-        .attr('y', height - 10)
-        .attr('text-anchor', 'middle')
-        .style('fill', 'black')
-        .text('Time');
+            .attr('x', width / 2)
+            .attr('y', height - 10)
+            .attr('text-anchor', 'middle')
+            .style('fill', 'black')
+            .text('Time');
 
         svgSelection.append('text')
-        .attr('transform', 'rotate(-90)')
-        .attr('x', -height / 2)
-        .attr('y', 20)
-        .attr('text-anchor', 'middle')
-        .style('fill', 'white')
-        .text(selectedNutrient.charAt(0).toUpperCase() + selectedNutrient.slice(1));
+            .attr('transform', 'rotate(-90)')
+            .attr('x', -height / 2)
+            .attr('y', 20)
+            .attr('text-anchor', 'middle')
+            .style('fill', 'white')
+            .text(selectedNutrient.charAt(0).toUpperCase() + selectedNutrient.slice(1));
     }
 
     onMount(() => drawChart());

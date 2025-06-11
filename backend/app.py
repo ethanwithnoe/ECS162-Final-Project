@@ -84,8 +84,15 @@ COL_GOALS = "goals"
 COL_RECORD = "records"
 
 
-DemoData.addDexUsers(mongo=mongo, DB_USERS=DB_USERS, COL_USERS=COL_USERS)
-
+DemoData.generateSampleData(
+    mongo=mongo,
+    DB_USERS=DB_USERS,
+    DB_FOOD=DB_FOOD,
+    COL_USERS=COL_USERS,
+    COL_FOOD=COL_FOOD,
+    COL_GOALS=COL_GOALS,
+    COL_RECORD=COL_RECORD,
+)
 # region Dex
 
 
@@ -139,20 +146,7 @@ def logout():
 # endregion Dex
 
 
-DemoData.addSampleFoods(
-    mongo=mongo,
-    DB_FOOD=DB_FOOD,
-    COL_FOOD=COL_FOOD,
-    userEmail="moderator@hw3.com",
-    month=6,
-    day=9,
-)
-DemoData.addSampleRecords(
-    mongo=mongo,
-    DB_USERS=DB_USERS,
-    COL_RECORD=COL_RECORD,
-    userEmail="moderator@hw3.com",
-)
+
 
 # I have no idea why the dev version requires every fetch/route to start with "/api".
 # The production version seemed to work fine without it.

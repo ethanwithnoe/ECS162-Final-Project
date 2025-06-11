@@ -56,7 +56,9 @@
 
         const cumulativeData = [];
         let total = 0;
+
         for (const d of filteredData) {
+
             total += d.nutrientValue;
             cumulativeData.push({ timestamp: d.timestamp, nutrientValue: total });
         }
@@ -77,6 +79,7 @@
 
         // Create Y scale (based on nutrient value)
         const maxY = Math.max(
+            
             d3.max(cumulativeData, d => d.nutrientValue) ?? 0, // was filteredData, now cumulative data
             goalValue * (1 + buffer / 100)
         );
@@ -90,7 +93,7 @@
         chartGroup.append('g')
             .attr('transform', `translate(0, ${innerHeight})`)
             .call(d3.axisBottom(xScale)
-                .tickFormat(d3.timeFormat('%-I %p'))        // "9 AM" not "09 AM"
+                .tickFormat(d3.timeFormat('%-I %p'))        // AM, not PM
             )
             .call(g => g.selectAll('.tick line').remove())
             .call(g => g.select('.domain').remove())
@@ -100,14 +103,14 @@
         // Create Y axis
         // Y-Axis grid lines
         chartGroup.append("g")
-        .attr("class", "grid")
-        .call(
-            d3.axisLeft(yScale)
-            .tickSize(-innerWidth)
-            .tickFormat(() => "")
-        )
-        .selectAll("line")
-        .attr("stroke", "#eee");
+            .attr("class", "grid")
+            .call(
+                d3.axisLeft(yScale)
+                .tickSize(-innerWidth)
+                .tickFormat(() => "")
+            )
+            .selectAll("line")
+            .attr("stroke", "#eee");
 
         // Y-Axis itself
         chartGroup.append('g')
@@ -120,20 +123,20 @@
 
         // Line generator for the nutrient data (Smooth line with curveMonotoneX)
         const line = d3.line<{ timestamp: string; nutrientValue: number }>()
-            .x(d => xScale(new Date(d.timestamp)))  // Convert timestamp to date for X axis
-            .y(d => yScale(d.nutrientValue))  // Map nutrient value to Y axis
-            .curve(d3.curveMonotoneX);  // Smooth the line
+            .x(d => xScale(new Date(d.timestamp)))      // Convert timestamp to date for X axis
+            .y(d => yScale(d.nutrientValue))            // Map nutrient value to Y axis
+            .curve(d3.curveMonotoneX);                  // Smooth the line
 
         // Add the line to the graph
         chartGroup.append('path')
-        .data([cumulativeData])
-        .attr('class', 'line')
-        .attr('d', line)
-        .attr('fill', 'none')
-        .attr('stroke', 'black')
-        .attr('stroke-width', 3)
-        .attr('stroke-linejoin', 'round')
-        .attr('stroke-linecap', 'round');
+            .data([cumulativeData])
+            .attr('class', 'line')
+            .attr('d', line)
+            .attr('fill', 'none')
+            .attr('stroke', 'black')
+            .attr('stroke-width', 3)
+            .attr('stroke-linejoin', 'round')
+            .attr('stroke-linecap', 'round');
 
         const last = cumulativeData[cumulativeData.length - 1];
 
@@ -179,8 +182,8 @@
             .attr('x', width / 2)
             .attr('y', height - 10)
             .attr('text-anchor', 'middle')
-            .style('fill', 'black') //Style black
-            .text('Time');  // X Axis label ("Time" for example)
+            .style('fill', 'black')         //Style black
+            .text('Time');                  // X Axis label ("Time" for example)
 
         // Y-axis label (Nutrient value)
         svgSelection.append('text')

@@ -3,7 +3,7 @@ from MongoWrapper import MongoWrapper
 
 # Function to add Dex accounts to Database
 # This is hardcoded, it is not synced with Dex.
-def addDexUsers(mongo: MongoWrapper, DB_USERS:str, COL_USERS:str):
+def addDexUsers(mongo: MongoWrapper, DB_USERS: str, COL_USERS: str):
     users = [
         {
             "email": "admin@hw3.com",
@@ -37,16 +37,23 @@ def addDexUsers(mongo: MongoWrapper, DB_USERS:str, COL_USERS:str):
                 },
             )
 
+
 # Function to add sample food logs to a user
-# Does not do anything if user has *any* food logged already
-def addSampleFoods(mongo: MongoWrapper, DB_FOOD:str, COL_FOOD:str, userEmail: str, month: int, day: int):
+def addSampleFoods(
+    mongo: MongoWrapper,
+    DB_FOOD: str,
+    COL_FOOD: str,
+    userEmail: str,
+    month: int,
+    day: int,
+):
     def toStr(num: int):
         return str(num).zfill(2)
 
     todayStr = f"2025-{toStr(month)}-{toStr(day)}"
     lastMonth = f"2025-{toStr(month-1)}-{toStr(day)}"
 
-    foodData = [
+    data = [
         {
             "calories": 300,
             "carbohydrates": 45,
@@ -103,24 +110,25 @@ def addSampleFoods(mongo: MongoWrapper, DB_FOOD:str, COL_FOOD:str, userEmail: st
             # "_id": "11"
         },
     ]
-    find = mongo.findDocument(
+    mongo.deleteDocument(
         DB_FOOD,
         COL_FOOD,
-        {"userid": userEmail},
+        {"isDemo": True},
     )
-    if not find:
-        for food in foodData:
-            mongo.insertDocument(
-                DB_FOOD,
-                COL_FOOD,
-                food,
-            )
+    for doc in data:
+        doc["isDemo"] = True
+        mongo.insertDocument(
+            DB_FOOD,
+            COL_FOOD,
+            doc,
+        )
 
 
 # Function to add sample record data to a user
-# Does not do anything if user has *any* recordgoal data already
-def addSampleRecords(mongo: MongoWrapper, DB_USERS:str, COL_RECORD:str, userEmail: str):
-    recordData = [
+def addSampleRecords(
+    mongo: MongoWrapper, DB_USERS: str, COL_RECORD: str, userEmail: str
+):
+    data = [
         {
             # "_id": {"$oid": "6845294727d84e4d2024ddc1"},
             "calories": True,
@@ -392,16 +400,104 @@ def addSampleRecords(mongo: MongoWrapper, DB_USERS:str, COL_RECORD:str, userEmai
             "timestamp": "2025-06-08",
         },
     ]
-    find = mongo.findDocument(
+
+    mongo.deleteDocument(
         DB_USERS,
         COL_RECORD,
-        {"userid": userEmail},
+        {"isDemo": True},
     )
-    if not find:
-        for record in recordData:
-            mongo.insertDocument(
-                DB_USERS,
-                COL_RECORD,
-                record,
-            )
+    for doc in data:
+        doc["isDemo"] = True
+        mongo.insertDocument(
+            DB_USERS,
+            COL_RECORD,
+            doc,
+        )
 
+
+# Function to add sample record data to a user
+def addSampleGoals(
+    mongo: MongoWrapper,
+    DB_USERS: str,
+    COL_GOALS: str,
+    userEmail: str,
+    month: int,
+    day: int,
+):
+    def toStr(num: int):
+        return str(num).zfill(2)
+
+    todayStr = f"2025-{toStr(month)}-{toStr(day)}"
+    data = [
+        {
+            # "_id": "68492a1b579b4a8baea8e9c8",
+            "Age": 22,
+            "Gender": "M",
+            "HeightFt": 5,
+            "HeightIn": 4,
+            "HeightCM": 162.56,
+            "Weight": 144,
+            "WeightKG": 65.31730128000001,
+            "Activity": "L",
+            "BMR": 1564.1730128000002,
+            "AMR": 2150.7378926,
+            "calories": 2151,
+            "protein": 54,
+            "fat": 48,
+            "carbohydrates": 242,
+            "userid": userEmail,
+            "timestamp": f"{todayStr}T10:15:00.000000-08:00",
+        }
+    ]
+    mongo.deleteDocument(
+        DB_USERS,
+        COL_GOALS,
+        {"isDemo": True},
+    )
+    for doc in data:
+        doc["isDemo"] = True
+        mongo.insertDocument(
+            DB_USERS,
+            COL_GOALS,
+            doc,
+        )
+
+
+# master caller function
+# change demo data params here
+def generateSampleData(
+    mongo: MongoWrapper,
+    DB_USERS: str,
+    DB_FOOD: str,
+    COL_USERS: str,
+    COL_FOOD: str,
+    COL_GOALS: str,
+    COL_RECORD: str,
+):
+    userEmail = "moderator@hw3.com"
+    month = 6
+    day = 11
+
+    addDexUsers(mongo=mongo, DB_USERS=DB_USERS, COL_USERS=COL_USERS)
+    addSampleFoods(
+        mongo=mongo,
+        DB_FOOD=DB_FOOD,
+        COL_FOOD=COL_FOOD,
+        userEmail=userEmail,
+        month=month,
+        day=day,
+    )
+    addSampleRecords(
+        mongo=mongo,
+        DB_USERS=DB_USERS,
+        COL_RECORD=COL_RECORD,
+        userEmail=userEmail,
+    )
+    addSampleGoals(
+        mongo=mongo,
+        DB_USERS=DB_USERS,
+        COL_GOALS=COL_GOALS,
+        userEmail=userEmail,
+        month=month,
+        day=day,
+    )
