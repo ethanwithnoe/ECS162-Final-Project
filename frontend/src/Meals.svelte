@@ -21,6 +21,31 @@
             console.log(error);
         }
     }
+
+    async function repeatFood(meal: any) {
+        try {
+            const foodData = {
+                name: meal.name,
+                brand: meal.brand || "",
+                calories: meal.calories,
+                protein: meal.protein,
+                fat: meal.fat,
+                carbohydrates: meal.carbohydrates,
+            };
+
+            const res = await fetch("/api/addfood", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(foodData),});
+            const data = await res.json();
+            if (res.ok){
+                console.log("Food added again:", data);
+                await loadMeals();
+            } else {
+                console.error("Failed to re-add food:", data);
+            }
+        } catch(err) {
+            console.error("Error adding food:", data);
+        }
+    }
+
     onMount(() => {
         loadMeals();
     })
@@ -95,6 +120,7 @@
                         <th>Protein (g)</th>
                         <th>Fat (g)</th>
                         <th>Carbohydrates (g)</th>
+                        <th>Re-add Food</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -105,6 +131,7 @@
                             <td><span class="value">{meal.protein}</span></td>
                             <td><span class="value">{meal.fat}</span></td>
                             <td><span class="value">{meal.carbohydrates}</span></td>
+                            <td><button onclick={() => repeatFood(meal)}>+</button></td>
                         </tr>
                     {/each}
                 </tbody>
