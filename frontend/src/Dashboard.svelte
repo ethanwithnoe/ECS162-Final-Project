@@ -418,94 +418,98 @@
         <div class="summary-cards">
             <div class="card">
                 <h3>Calories</h3>
-                <p>Current Progress: {userGoalProgress.calories}</p>
-                <div class="ProgressChart">
-                    {#if filteredProgress}
+                {#if filteredProgress && (view !== "today")}
+                    <div class="ProgressChart">
                         <ProgressChart
                             filteredData={filteredProgress}
                             selectedNutrient={"calories"}
                             width={150}
                             height={150}
                         />
-                    {/if}
-                </div>
-                <small class="goalDiff">
-                    Calorie Goal: {userGoals.calories},
-                    {#if userGoalProgress.caloriesleft > 0}
-                        just {userGoalProgress.caloriesleft} off!
-                    {:else}
-                        complete!
-                    {/if}
-                </small>
+                    </div>
+                {:else if filteredProgress}
+                    <p>Current Progress: {userGoalProgress.calories}</p>
+                    <small class="goalDiff">
+                        Calories Goal: {userGoals.calories},
+                        {#if userGoalProgress.caloriesleft > 0}
+                            just {userGoalProgress.caloriesleft} off!
+                        {:else}
+                            complete!
+                        {/if}
+                    </small>
+                {/if}
             </div>
 
             <div class="card">
                 <h3>Protein</h3>
-                <p>Current Progress: {userGoalProgress.protein}</p>
-                <div class="ProgressChart">
-                    {#if filteredProgress}
+                {#if filteredProgress && (view !== "today")}
+                    <div class="ProgressChart">
                         <ProgressChart
                             filteredData={filteredProgress}
                             selectedNutrient={"protein"}
                             width={150}
                             height={150}
                         />
-                    {/if}
-                </div>
-                <small class="goalDiff">
-                    Protein Goal: {userGoals.protein},
-                    {#if userGoalProgress.proteinleft > 0}
-                        just {userGoalProgress.proteinleft} off!
-                    {:else}
-                        complete!
-                    {/if}
-                </small>
+                    </div>
+                {:else if filteredProgress}
+                    <p>Current Progress: {userGoalProgress.protein}</p>
+                    <small class="goalDiff">
+                        Protein Goal: {userGoals.protein},
+                        {#if userGoalProgress.proteinleft > 0}
+                            just {userGoalProgress.proteinleft} off!
+                        {:else}
+                            complete!
+                        {/if}
+                    </small>
+                {/if}
             </div>
 
             <div class="card">
                 <h3>Carbohydrates</h3>
-                <p>Current Progress: {userGoalProgress.carbohydrates}</p>
-                <div class="ProgressChart">
-                    {#if filteredProgress}
+                {#if filteredProgress && (view !== "today")}
+                    <div class="ProgressChart">
                         <ProgressChart
                             filteredData={filteredProgress}
                             selectedNutrient={"carbohydrates"}
                             width={150}
                             height={150}
                         />
-                    {/if}
-                </div>
-                <small class="goalDiff">
-                    Carbohydrate Goal: {userGoals.carbohydrates},
-                    {#if userGoalProgress.carbohydratesleft > 0}
-                        just {userGoalProgress.carbohydratesleft} off!
-                    {:else}
-                        complete!
-                    {/if}
-                </small>
+                    </div>
+                {:else if filteredProgress}
+                    <p>Current Progress: {userGoalProgress.carbohydrates}</p>
+                    <small class="goalDiff">
+                        Carbohydrate Goal: {userGoals.carbohydrates},
+                        {#if userGoalProgress.carbohydratesleft > 0}
+                            just {userGoalProgress.carbohydratesleft} off!
+                        {:else}
+                            complete!
+                        {/if}
+                    </small>
+                {/if}
             </div>
 
             <div class="card">
                 <h3>Fat</h3>
-                <p>Current Progress: {userGoalProgress.fat}</p>
-                <div class="ProgressChart">
-                    {#if filteredProgress}
+                {#if filteredProgress && (view !== "today")}
+                    <div class="ProgressChart">
                         <ProgressChart
                             filteredData={filteredProgress}
                             selectedNutrient={"fat"}
                             width={150}
                             height={150}
                         />
-                    {/if}
-                </div>
-                <small class="goalDiff">
-                    Fat Goal: {userGoals.fat},
-                    {#if userGoalProgress.fatleft > 0}
-                        just {userGoalProgress.fatleft} off!
-                    {:else}
-                        complete!
-                    {/if}
-                </small>
+                    </div>
+                {:else if filteredProgress}
+                    <p>Current Progress: {userGoalProgress.fat}</p>
+                    <small class="goalDiff">
+                        Fat Goal: {userGoals.fat},
+                        {#if userGoalProgress.fatleft > 0}
+                            just {userGoalProgress.fatleft} off!
+                        {:else}
+                            complete!
+                        {/if}
+                    </small>
+                {/if}
             </div>
         </div>
 
@@ -587,8 +591,8 @@
                             {filteredData}
                             {goalValue}
                             {buffer}
-                            height={200}
-                            width={300}
+                            height={400}
+                            width={600}
                             selectedNutrient={selectedNutrient}
                         />
                     {/if}
