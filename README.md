@@ -20,9 +20,9 @@ PORT=8000
 ```
 
 ## Sample Data
-This project automatically adds sample data.
+This project automatically adds sample data. If the graphs appear empty, its likely because there is no data for that day. See below on how to generate sample data timestamped to a particular day.
 
-To disable this, remove or comment out lines `88` to `96` in `backend/app.py`:
+To disable adding the premade sample data, remove or comment out lines `88` to `96` in `backend/app.py`:
 ```python
 DemoData.generateSampleData(
     mongo=mongo,

@@ -343,19 +343,6 @@ def getFriendsList():
 # endregion Friends
 
 
-# Production Mode requires this be last.
-# This seems not the case for Dev Mode.
-@app.route("/")
-@app.route("/<path:path>")
-def home(path=""):
-    if isDevEnv:
-        return redirect(f"http://localhost:5173")
-    else:
-        if path != "" and os.path.exists(os.path.join(static_path, path)):
-            return send_from_directory(static_path, path)
-        return send_from_directory(template_path, "index.html")
-
-
 # scheduler for goal function
 
 
@@ -390,10 +377,6 @@ def goalcheck():
 
 dailyscheduler = BackgroundScheduler()
 dailyscheduler.add_job(goalcheck, "cron", hour=23, minute=59)
-
-if __name__ == "__main__":
-    dailyscheduler.start()
-    app.run(debug=True, host="0.0.0.0", port=8000)
 
 # region Food Tracking
 
@@ -691,3 +674,20 @@ def getUserFoodsTD():
 
 
 # endregion Food Tracking
+
+# Production Mode requires this be last.
+# This seems not the case for Dev Mode.
+@app.route("/")
+@app.route("/<path:path>")
+def home(path=""):
+    if isDevEnv:
+        return redirect(f"http://localhost:5173")
+    else:
+        if path != "" and os.path.exists(os.path.join(static_path, path)):
+            return send_from_directory(static_path, path)
+        return send_from_directory(template_path, "index.html")
+
+
+if __name__ == "__main__":
+    dailyscheduler.start()
+    app.run(debug=True, host="0.0.0.0", port=8000)
