@@ -368,6 +368,9 @@
         fetchFriendsList();
     });
 
+    function capitalize(str:string):string {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
 </script>
 
 <div class="dashboard-container">
@@ -517,7 +520,9 @@
                 <!-- Bottom Row -->
                 <div class="card large">
                     <div class="card-content">
-                    <h3>Today's Calories</h3>
+                        <h3>
+                            Today's {capitalize(selectedNutrient)}
+                        </h3>
                         {#if filteredData}
                             <BarChart
                                 {filteredData}
@@ -585,7 +590,9 @@
                 </div>
 
                 <div class="card large">
-                    <h3>Today's Steps</h3>
+                    <h3>
+                        Today's {capitalize(selectedNutrient)}
+                    </h3>
                     {#if filteredData}
                         <LineChart
                             {filteredData}
