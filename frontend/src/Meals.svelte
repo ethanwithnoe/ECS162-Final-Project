@@ -7,6 +7,8 @@
     let meals = [];
     let error = "";
 
+    let searchFood = "";
+
     async function loadMeals() {
         try {
             const res = await fetch("/api/getuserfoods", {credentials: "include"});
@@ -46,6 +48,9 @@
         }
     }
 
+    $: filteredMeals = meals.filter(meal =>
+        meal.name.toLowerCase().includes(searchFood.toLowerCase())
+    );
     onMount(() => {
         loadMeals();
     })
@@ -103,7 +108,7 @@
         <main class="content">
             <h1>My Meals</h1>
             <div class="search-filter">
-                <input placeholder="Search..."/>
+                <input placeholder="Search Meals..." bind:value={searchFood}/>
                 <button>Filter</button>
                 <button onclick={toggleAddFood}> + </button>
             </div>
@@ -124,7 +129,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {#each meals as meal}
+                    {#each filteredMeals as meal}
                         <tr>
                             <td>{meal.name}</td>
                             <td><span class="value">{meal.calories}</span></td>
