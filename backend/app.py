@@ -427,6 +427,22 @@ def search():
     data = response.json()
     return jsonify(data), 200
 
+@app.route("/api/deletefood", methods=["POST"])
+def deleteFood():
+    user = session.get("user")
+    if not user:
+        return jsonify({"result": 10})
+    food_id = request.form.get("food_id")
+    if not food_id:
+        return jsonify({"result": 11})
+    
+    collection = mongo.client[DB_FOOD][COL_FOOD]
+    result = collection.delete_one({"_id": ObjectId(food_id), "userid": user["email"]})
+
+    if result.deleted_count == 1:
+        return jsonify({"result": 0})
+    else:
+        return jsonify({"result": 12})
 
 @app.route("/api/addfood", methods=["POST"])
 def addfood():

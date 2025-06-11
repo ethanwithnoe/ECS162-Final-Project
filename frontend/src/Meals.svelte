@@ -48,6 +48,23 @@
         }
     }
 
+    async function removeFood(food_Id: string) {
+        try {
+            const formData = new FormData();
+            formData.append("food_id", food_Id);
+
+            const res = await fetch("/api/deletefood", {method: "POST", body: formData,});
+            const data = await res.json()
+            if (data.result === 0) {
+                meals = meals.filter(meal => meal._id !== food_Id);
+            } else {
+                console.error("Failed to delete food:", data.result);
+            }
+        } catch(err) {
+            console.error("Error deleteing meal:", err);
+        }
+    }
+
     $: filteredMeals = meals.filter(meal =>
         meal.name.toLowerCase().includes(searchFood.toLowerCase())
     );
@@ -126,10 +143,11 @@
                         <th>Fat (g)</th>
                         <th>Carbohydrates (g)</th>
                         <th>Re-add Food</th>
+                        <th>Remove Item</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {#each filteredMeals as meal}
+                    {#each filteredMeals as meal (meal._id)}
                         <tr>
                             <td>{meal.name}</td>
                             <td><span class="value">{meal.calories}</span></td>
@@ -137,6 +155,7 @@
                             <td><span class="value">{meal.fat}</span></td>
                             <td><span class="value">{meal.carbohydrates}</span></td>
                             <td><button onclick={() => repeatFood(meal)}>+</button></td>
+                            <td><button onclick={() => removeFood(meal._id)}>-</button></td>
                         </tr>
                     {/each}
                 </tbody>
